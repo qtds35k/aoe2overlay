@@ -3,6 +3,7 @@ async function main() {
     const urlParams = new URLSearchParams(window.location.search);
     const profileId = urlParams.get('profileId');
     const corsProxyUrl = 'https://api.allorigins.win/raw?url=';
+    // const corsProxyUrl = 'https://cors-proxy.htmldriven.com/?url=';  // cors-proxy service is disabled.
     const civCodeTablePath = '/aoe2overlay/resource/civ.json';
 
     // streamerProfileId is grabbed from query param in url, then is used to get current opponentProfileId 
