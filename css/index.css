@@ -1,0 +1,84 @@
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.playerName {
+    font-family: "Goudy Old Style", serif;
+    font-weight: bold;
+    font-size: 40px;
+}
+
+th,
+td {
+    text-align: center;
+    padding: 8px;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+.statsHeader {
+    font-family: "Goudy Old Style", serif;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.statsValue {
+    font-family: "Goudy Old Style", serif;
+    font-size: 30px;
+}
+
+/* Streamer civs styled with increasing image size */
+.streamerCiv {
+    text-align: right;
+}
+.streamerCiv img:nth-child(1) {
+    width: 30px;
+}
+.streamerCiv img:nth-child(2) {
+    width: 40px;
+}
+.streamerCiv img:nth-child(3) {
+    width: 50px;
+}
+.streamerCiv img:nth-child(4) {
+    width: 60px;
+}
+.streamerCiv img:nth-child(5) {
+    width: 65px;
+}
+.streamerCiv img:nth-child(6) {
+    width: 75px;
+}
+.streamerCiv img:nth-child(7) {
+    width: 90px;
+}
+
+
+/* Opponent civs styled with decreasing image size */
+.opponentCiv {
+    text-align: left;
+}
+.opponentCiv img:nth-child(1) {
+    width: 90px;
+}
+.opponentCiv img:nth-child(2) {
+    width: 75px;
+}
+.opponentCiv img:nth-child(3) {
+    width: 65px;
+}
+.opponentCiv img:nth-child(4) {
+    width: 60px;
+}
+.opponentCiv img:nth-child(5) {
+    width: 50px;
+}
+.opponentCiv img:nth-child(6) {
+    width: 40px;
+}
+.opponentCiv img:nth-child(7) {
+    width: 30px;
+}
