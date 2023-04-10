@@ -21,7 +21,7 @@ async function main() {
         // Streamer's civ list is reversed for symmetric display.
         playerStats.lastUsedCivs.reverse().forEach((civ) => {
             const img = document.createElement("img");
-            img.src = `/img/${civ}.png`;
+            img.src = `img/${civ}.png`;
             img.alt = civ;
             lastUsedCivsElement.appendChild(img);
         });
