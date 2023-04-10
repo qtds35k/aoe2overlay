@@ -75,7 +75,7 @@ async function main() {
     // Get player's name, current/max elo, total games played, winrate, and used civs in last 5 ranked 1v1 games.
     async function getPlayerStats(profileId) {
         const urlPlayerStatus = `https://aoe2.net/api/nightbot/rank?game=aoe2de&leaderboard_id=3&profile_id=${profileId}&flag=false`;
-        const urlRatingHistory = `https://aoe2.net/api/player/ratinghistory?game=aoe2de&leaderboard_id=3&profile_id=${profileId}&count=1000`;
+        const urlRatingHistory = `https://aoe2.net/api/player/ratinghistory?game=aoe2de&leaderboard_id=3&profile_id=${profileId}&count=100`;
         const urlMatches = `https://aoe2.net/api/player/matches?game=aoe2de&count=20&profile_id=${profileId}`;
 
         const regexPlayerName = /.*(?=\s\(\d+\))/;
@@ -87,7 +87,7 @@ async function main() {
             $.ajax({ url: urlPlayerStatus }),
             $.getJSON(urlRatingHistory),
             $.getJSON(urlMatches),
-            $.getJSON('/resource/civ.json')
+            $.getJSON('/aoe2overlay/resource/civ.json')
         ]);
         const playerName = playerStatus.match(regexPlayerName)[0];
         const playerCurrentElo = playerStatus.match(regexPlayerElo)[0];
