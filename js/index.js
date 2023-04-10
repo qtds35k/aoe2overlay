@@ -2,6 +2,8 @@
 async function main() {
     const urlParams = new URLSearchParams(window.location.search);
     const profileId = urlParams.get('profileId');
+    const corsProxyUrl = 'https://api.allorigins.win/raw?url=';
+    const civCodeTablePath = '/aoe2overlay/resource/civ.json';
 
     // streamerProfileId is grabbed from query param in url, then is used to get current opponentProfileId 
     var streamerProfileId = profileId;
@@ -54,16 +56,16 @@ async function main() {
     // Get opponent's profileId from last 5 games, assuming at least 1 ranked 1v1 game is included here.
     async function getOpponentProfileId(profileId) {
         const urlMatches = 'https://aoe2.net/api/player/matches?game=aoe2de&count=5&profile_id=' + profileId;
-
         try {
-            const response = await fetch(urlMatches);
+            const response = await fetch(corsProxyUrl + encodeURIComponent(urlMatches));
             const data = await response.json();
-
+    
             const filteredMatches = data.filter(match => match.leaderboard_id === 3).slice(0, 5);
             for (let i = 0; i < filteredMatches[0].players.length; i++) {
                 const player = filteredMatches[0].players[i];
                 if (player.profile_id !== streamerProfileId) {
                     const opponentProfileId = player.profile_id;
+                    console.log('opponentProfileId = ' + opponentProfileId);
                     return opponentProfileId.toString();
                 }
             }
@@ -84,10 +86,10 @@ async function main() {
         const regexPlayerTotalGames = /(\d+)(?=\sgames)/;
 
         const [playerStatus, ratingHistory, matches, civCodeTable] = await Promise.all([
-            $.ajax({ url: urlPlayerStatus }),
-            $.getJSON(urlRatingHistory),
-            $.getJSON(urlMatches),
-            $.getJSON('/aoe2overlay/resource/civ.json')
+            $.ajax({ url: corsProxyUrl + encodeURIComponent(urlPlayerStatus) }),
+            $.getJSON(corsProxyUrl + encodeURIComponent(urlRatingHistory)),
+            $.getJSON(corsProxyUrl + encodeURIComponent(urlMatches)),
+            $.getJSON(civCodeTablePath)
         ]);
         const playerName = playerStatus.match(regexPlayerName)[0];
         const playerCurrentElo = playerStatus.match(regexPlayerElo)[0];
