@@ -21,7 +21,7 @@ async function main() {
         // Streamer's civ list is reversed for symmetric display.
         playerStats.lastUsedCivs.reverse().forEach((civ) => {
             const img = document.createElement("img");
-            img.src = `/aoe2overlay/img/${civ}.png`;
+            img.src = `/img/${civ}.png`;
             img.alt = civ;
             lastUsedCivsElement.appendChild(img);
         });
@@ -60,7 +60,6 @@ async function main() {
             const data = await response.json();
 
             const filteredMatches = data.filter(match => match.leaderboard_id === 3).slice(0, 5);
-
             for (let i = 0; i < filteredMatches[0].players.length; i++) {
                 const player = filteredMatches[0].players[i];
                 if (player.profile_id !== streamerProfileId) {
@@ -78,7 +77,6 @@ async function main() {
         const urlPlayerStatus = `https://aoe2.net/api/nightbot/rank?game=aoe2de&leaderboard_id=3&profile_id=${profileId}&flag=false`;
         const urlRatingHistory = `https://aoe2.net/api/player/ratinghistory?game=aoe2de&leaderboard_id=3&profile_id=${profileId}&count=1000`;
         const urlMatches = `https://aoe2.net/api/player/matches?game=aoe2de&count=20&profile_id=${profileId}`;
-        const urlCivCode = `https://aoe2.net/api/strings?game=aoe2de&language=en`;
 
         const regexPlayerName = /.*(?=\s\(\d+\))/;
         const regexPlayerElo = /\d+(?=\))/;
@@ -89,7 +87,7 @@ async function main() {
             $.ajax({ url: urlPlayerStatus }),
             $.getJSON(urlRatingHistory),
             $.getJSON(urlMatches),
-            $.getJSON(urlCivCode)
+            $.getJSON('/resource/civ.json')
         ]);
         const playerName = playerStatus.match(regexPlayerName)[0];
         const playerCurrentElo = playerStatus.match(regexPlayerElo)[0];

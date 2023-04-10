@@ -1,0 +1,172 @@
+{
+    "civ": [
+        {
+            "id": 1,
+            "string": "Britons"
+        },
+        {
+            "id": 2,
+            "string": "Franks"
+        },
+        {
+            "id": 3,
+            "string": "Goths"
+        },
+        {
+            "id": 4,
+            "string": "Teutons"
+        },
+        {
+            "id": 5,
+            "string": "Japanese"
+        },
+        {
+            "id": 6,
+            "string": "Chinese"
+        },
+        {
+            "id": 7,
+            "string": "Byzantines"
+        },
+        {
+            "id": 8,
+            "string": "Persians"
+        },
+        {
+            "id": 9,
+            "string": "Saracens"
+        },
+        {
+            "id": 10,
+            "string": "Turks"
+        },
+        {
+            "id": 11,
+            "string": "Vikings"
+        },
+        {
+            "id": 12,
+            "string": "Mongols"
+        },
+        {
+            "id": 13,
+            "string": "Celts"
+        },
+        {
+            "id": 14,
+            "string": "Spanish"
+        },
+        {
+            "id": 15,
+            "string": "Aztecs"
+        },
+        {
+            "id": 16,
+            "string": "Mayans"
+        },
+        {
+            "id": 17,
+            "string": "Huns"
+        },
+        {
+            "id": 18,
+            "string": "Koreans"
+        },
+        {
+            "id": 19,
+            "string": "Italians"
+        },
+        {
+            "id": 20,
+            "string": "Hindustanis"
+        },
+        {
+            "id": 21,
+            "string": "Incas"
+        },
+        {
+            "id": 22,
+            "string": "Magyars"
+        },
+        {
+            "id": 23,
+            "string": "Slavs"
+        },
+        {
+            "id": 24,
+            "string": "Portuguese"
+        },
+        {
+            "id": 25,
+            "string": "Ethiopians"
+        },
+        {
+            "id": 26,
+            "string": "Malians"
+        },
+        {
+            "id": 27,
+            "string": "Berbers"
+        },
+        {
+            "id": 28,
+            "string": "Khmer"
+        },
+        {
+            "id": 29,
+            "string": "Malay"
+        },
+        {
+            "id": 30,
+            "string": "Burmese"
+        },
+        {
+            "id": 31,
+            "string": "Vietnamese"
+        },
+        {
+            "id": 32,
+            "string": "Bulgarians"
+        },
+        {
+            "id": 33,
+            "string": "Tatars"
+        },
+        {
+            "id": 34,
+            "string": "Cumans"
+        },
+        {
+            "id": 35,
+            "string": "Lithuanians"
+        },
+        {
+            "id": 36,
+            "string": "Burgundians"
+        },
+        {
+            "id": 37,
+            "string": "Sicilians"
+        },
+        {
+            "id": 38,
+            "string": "Poles"
+        },
+        {
+            "id": 39,
+            "string": "Bohemians"
+        },
+        {
+            "id": 40,
+            "string": "Dravidians"
+        },
+        {
+            "id": 41,
+            "string": "Bengalis"
+        },
+        {
+            "id": 42,
+            "string": "Gurjaras"
+        }
+    ]
+}
