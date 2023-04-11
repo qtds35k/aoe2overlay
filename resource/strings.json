@@ -1,4 +1,38 @@
 {
+    "color": [
+        {
+            "id": 1,
+            "string": "Blue"
+        },
+        {
+            "id": 2,
+            "string": "Red"
+        },
+        {
+            "id": 3,
+            "string": "Green"
+        },
+        {
+            "id": 4,
+            "string": "Yellow"
+        },
+        {
+            "id": 5,
+            "string": "Teal"
+        },
+        {
+            "id": 6,
+            "string": "Purple"
+        },
+        {
+            "id": 7,
+            "string": "Gray"
+        },
+        {
+            "id": 8,
+            "string": "Orange"
+        }
+    ],
     "civ": [
         {
             "id": 1,

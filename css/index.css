@@ -8,6 +8,7 @@ table {
     font-weight: bold;
     font-size: 40px;
     color: white;
+    text-shadow: 1px 1px white;
 }
 
 th,
@@ -17,7 +18,6 @@ td {
 }
 
 th {
-    background-color: black;
     color: white;
 }
 
@@ -25,13 +25,20 @@ th {
     font-family: "Goudy Old Style", serif;
     font-weight: bold;
     font-size: 20px;
-    color: white;
+    color: pink;
 }
 
 .statsValue {
     font-family: "Goudy Old Style", serif;
     font-size: 30px;
     color: white;
+}
+
+.statsValueCurrentElo {
+    font-family: "Goudy Old Style", serif;
+    font-weight: bold;
+    font-size: 35px;
+    color: yellow;
 }
 
 /* Streamer civs styled with increasing image size */
