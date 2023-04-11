@@ -1,17 +1,14 @@
 // Reason for this wrapping main() is because we need to await opponentProfileId to be resolved.
 async function main() {
     const urlParams = new URLSearchParams(window.location.search);
-    const profileId = urlParams.get('profileId');
     const corsProxyUrl = 'https://api.allorigins.win/raw?url=';
     // const corsProxyUrl = 'https://cors-proxy.htmldriven.com/?url=';  // cors-proxy service is disabled.
     // const gitRepoName = ''; // for local testing
     const gitRepoName = '/aoe2overlay'; // for github page endpoint
-    const stringsLookupPath = gitRepoName + '/resource/strings.json';
+    const stringsLookupPath = `${gitRepoName}/resource/strings.json`;
 
-
-    // streamerProfileId is grabbed from query param in url, then is used to get current opponentProfileId 
-    var streamerProfileId = profileId;
-    var opponentProfileId = await getOpponentProfileId(streamerProfileId);
+    const streamerProfileId = urlParams.get('profileId');
+    const opponentProfileId = await getOpponentProfileId(streamerProfileId);
 
     // Populate streamer section.
     getPlayerStats(streamerProfileId).then(playerStats => {
@@ -19,6 +16,8 @@ async function main() {
 
         document.getElementById("playerName1").innerText = playerStats.playerName;
         document.getElementById("playerName1").style.textShadow = "3px 3px " + playerStats.lastPlayerColor;
+        // setting opponent color here; if overlay's not displaying ongoing match, opponent might have had more games than streamer
+        document.getElementById("playerName2").style.textShadow = "3px 3px " + playerStats.lastOpponentColor;
         document.getElementById("playerCurrentElo1").innerText = playerStats.playerCurrentElo;
         document.getElementById("playerMaxElo1").innerText = playerStats.playerMaxElo;
         document.getElementById("playerTotalGames1").innerText = playerStats.playerTotalGames;
@@ -41,14 +40,12 @@ async function main() {
         console.log(playerStats);
 
         document.getElementById("playerName2").innerText = playerStats.playerName;
-        document.getElementById("playerName2").style.textShadow = "3px 3px " + playerStats.lastPlayerColor;
         document.getElementById("playerCurrentElo2").innerText = playerStats.playerCurrentElo;
         document.getElementById("playerMaxElo2").innerText = playerStats.playerMaxElo;
         document.getElementById("playerTotalGames2").innerText = playerStats.playerTotalGames;
         document.getElementById("playerWinrate2").innerText = playerStats.playerWinrate;
 
         const lastUsedCivsElement = document.getElementById("lastUsedCivs2");
-        // Streamer's civ list is reversed for symmetric display.
         playerStats.lastUsedCivs.forEach((civ) => {
             const img = document.createElement("img");
             img.src = `img/${civ}.png`;
@@ -66,12 +63,13 @@ async function main() {
             const response = await fetch(corsProxyUrl + encodeURIComponent(urlMatches));
             const data = await response.json();
 
-            const filteredMatches = data.filter(match => match.leaderboard_id === 3).slice(0, 5);
-            for (let i = 0; i < filteredMatches[0].players.length; i++) {
-                const player = filteredMatches[0].players[i];
-                if (player.profile_id !== streamerProfileId) {
+            const filteredMatches = data.filter(match => match.leaderboard_id === 3)[0];
+            console.log(filteredMatches.players);
+
+            for (let i = 0; i < filteredMatches.players.length; i++) {
+                const player = filteredMatches.players[i];
+                if (player.profile_id !== parseInt(streamerProfileId)) {
                     const opponentProfileId = player.profile_id;
-                    // console.log('opponentProfileId = ' + opponentProfileId);
                     return opponentProfileId.toString();
                 }
             }
@@ -111,9 +109,10 @@ async function main() {
 
         for (let i = 0; i < filteredMatches.length; i++) {
             const player = filteredMatches[i].players.find(p => p.profile_id == profileId);
+            const opponent = filteredMatches[i].players.find(p => p.profile_id != profileId);
             if (i == 0) {
-                const colorCode = player.color;
-                lastPlayerColor = stringsLookup.color.find(c => c.id === colorCode).string.toLowerCase();
+                lastPlayerColor = stringsLookup.color.find(c => c.id === player.color).string.toLowerCase();
+                lastOpponentColor = stringsLookup.color.find(c => c.id === opponent.color).string.toLowerCase();
             }
             const civCode = player.civ;
             const civString = stringsLookup.civ.find(c => c.id === civCode).string;
@@ -127,7 +126,8 @@ async function main() {
             playerWinrate,
             playerMaxElo,
             lastUsedCivs,
-            lastPlayerColor
+            lastPlayerColor,
+            lastOpponentColor
         };
     }
 
