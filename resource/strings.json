@@ -18,15 +18,15 @@
         },
         {
             "id": 5,
-            "string": "Teal"
+            "string": "#00FFFF"
         },
         {
             "id": 6,
-            "string": "Purple"
+            "string": "#800080"
         },
         {
             "id": 7,
-            "string": "Gray"
+            "string": "#808080"
         },
         {
             "id": 8,

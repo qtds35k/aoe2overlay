@@ -15,9 +15,9 @@ async function main() {
         console.log(playerStats);
 
         document.getElementById("playerName1").innerText = playerStats.playerName;
-        document.getElementById("playerName1").style.textShadow = "3px 3px " + playerStats.lastPlayerColor;
+        setTextShadow("playerName1", playerStats.lastPlayerColor);
         // setting opponent color here; if overlay's not displaying ongoing match, opponent might have had more games than streamer
-        document.getElementById("playerName2").style.textShadow = "3px 3px " + playerStats.lastOpponentColor;
+        setTextShadow("playerName2", playerStats.lastOpponentColor);
         document.getElementById("playerCurrentElo1").innerText = playerStats.playerCurrentElo;
         document.getElementById("playerMaxElo1").innerText = playerStats.playerMaxElo;
         document.getElementById("playerTotalGames1").innerText = playerStats.playerTotalGames;
@@ -111,8 +111,8 @@ async function main() {
             const player = filteredMatches[i].players.find(p => p.profile_id == profileId);
             const opponent = filteredMatches[i].players.find(p => p.profile_id != profileId);
             if (i == 0) {
-                lastPlayerColor = stringsLookup.color.find(c => c.id === player.color).string.toLowerCase();
-                lastOpponentColor = stringsLookup.color.find(c => c.id === opponent.color).string.toLowerCase();
+                lastPlayerColor = player.color;
+                lastOpponentColor = opponent.color;
             }
             const civCode = player.civ;
             const civString = stringsLookup.civ.find(c => c.id === civCode).string;
@@ -131,6 +131,17 @@ async function main() {
         };
     }
 
+    function setTextShadow(playerNameId, colorCode) {
+        $.getJSON(stringsLookupPath, function (stringsLookup) {
+            const lightColors = [4, 5];
+            if (lightColors.includes(colorCode)) {
+                // css text-shadow works better with lower horizontal offset for light colors.
+                document.getElementById(playerNameId).style.textShadow = "1.5px 1.5px 5px " + stringsLookup.color.find(c => c.id === colorCode).string.toLowerCase();
+                return;
+            }
+            document.getElementById(playerNameId).style.textShadow = "2px 2px 1px " + stringsLookup.color.find(c => c.id === colorCode).string.toLowerCase();
+        });
+    }
 }
 
 // Actual execution happens here.
