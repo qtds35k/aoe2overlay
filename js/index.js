@@ -22,7 +22,7 @@ async function main() {
         document.getElementById("playerTotalGames1").innerText = playerStats.playerTotalGames;
         document.getElementById("playerWinrate1").innerText = playerStats.playerWinrate;
 
-
+img.style.backgroundColor = "black";
         const images = []; // array to hold the image elements
         // create image elements and add to the images array
         playerStats.lastUsedCivs.forEach((civ, index) => {
@@ -30,6 +30,7 @@ async function main() {
             img.src = `img/${civ}.png`;
             img.alt = civ;
             img.style.width = 90 - (10 * index) + "px"; // set width
+            img.style.backgroundColor = "black";
             images.unshift(img); // add to the beginning of the array
         });
 
@@ -61,6 +62,7 @@ async function main() {
           img.src = `img/${civ}.png`;
           img.alt = civ;
           img.style.width = 90 - (10 * index) + "px"; // set width
+          img.style.backgroundColor = "black";
           images.push(img); // add to the end of the array
         });
         
