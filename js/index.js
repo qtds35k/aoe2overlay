@@ -22,7 +22,6 @@ async function main() {
         document.getElementById("playerTotalGames1").innerText = playerStats.playerTotalGames;
         document.getElementById("playerWinrate1").innerText = playerStats.playerWinrate;
 
-img.style.backgroundColor = "black";
         const images = []; // array to hold the image elements
         // create image elements and add to the images array
         playerStats.lastUsedCivs.forEach((civ, index) => {
@@ -58,17 +57,17 @@ img.style.backgroundColor = "black";
         const images = []; // array to hold the image elements
         // create image elements and add to the images array
         playerStats.lastUsedCivs.forEach((civ, index) => {
-          const img = document.createElement("img");
-          img.src = `img/${civ}.png`;
-          img.alt = civ;
-          img.style.width = 90 - (10 * index) + "px"; // set width
-          img.style.backgroundColor = "black";
-          images.push(img); // add to the end of the array
+            const img = document.createElement("img");
+            img.src = `img/${civ}.png`;
+            img.alt = civ;
+            img.style.width = 90 - (10 * index) + "px"; // set width
+            img.style.backgroundColor = "black";
+            images.push(img); // add to the end of the array
         });
-        
+
         const lastUsedCivsElement = document.getElementById("lastUsedCivs2");
         images.forEach(img => lastUsedCivsElement.appendChild(img)); // add images to the table cell
-        
+
         // set table cell styles
         lastUsedCivsElement.style.display = "flex";
         lastUsedCivsElement.style.flexDirection = "row";
