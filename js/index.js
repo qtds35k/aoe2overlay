@@ -22,14 +22,24 @@ async function main() {
         document.getElementById("playerTotalGames1").innerText = playerStats.playerTotalGames;
         document.getElementById("playerWinrate1").innerText = playerStats.playerWinrate;
 
-        const lastUsedCivsElement = document.getElementById("lastUsedCivs1");
-        // Streamer's civ list is reversed for symmetric display.
-        playerStats.lastUsedCivs.reverse().forEach((civ) => {
+
+        const images = []; // array to hold the image elements
+        // create image elements and add to the images array
+        playerStats.lastUsedCivs.forEach((civ, index) => {
             const img = document.createElement("img");
             img.src = `img/${civ}.png`;
             img.alt = civ;
-            lastUsedCivsElement.appendChild(img);
+            img.style.width = 90 - (10 * index) + "px"; // set width
+            images.unshift(img); // add to the beginning of the array
         });
+
+        const lastUsedCivsElement = document.getElementById("lastUsedCivs1");
+        images.forEach(img => lastUsedCivsElement.prepend(img)); // add images to the table cell
+
+        // set table cell styles
+        lastUsedCivsElement.style.display = "flex";
+        lastUsedCivsElement.style.flexDirection = "row-reverse";
+        lastUsedCivsElement.style.alignItems = "baseline";
     }).catch(error => {
         console.error(error);
     });
@@ -44,18 +54,28 @@ async function main() {
         document.getElementById("playerTotalGames2").innerText = playerStats.playerTotalGames;
         document.getElementById("playerWinrate2").innerText = playerStats.playerWinrate;
 
-        const lastUsedCivsElement = document.getElementById("lastUsedCivs2");
-        playerStats.lastUsedCivs.forEach((civ) => {
-            const img = document.createElement("img");
-            img.src = `img/${civ}.png`;
-            img.alt = civ;
-            lastUsedCivsElement.appendChild(img);
+        const images = []; // array to hold the image elements
+        // create image elements and add to the images array
+        playerStats.lastUsedCivs.forEach((civ, index) => {
+          const img = document.createElement("img");
+          img.src = `img/${civ}.png`;
+          img.alt = civ;
+          img.style.width = 90 - (10 * index) + "px"; // set width
+          images.push(img); // add to the end of the array
         });
+        
+        const lastUsedCivsElement = document.getElementById("lastUsedCivs2");
+        images.forEach(img => lastUsedCivsElement.appendChild(img)); // add images to the table cell
+        
+        // set table cell styles
+        lastUsedCivsElement.style.display = "flex";
+        lastUsedCivsElement.style.flexDirection = "row";
+        lastUsedCivsElement.style.alignItems = "baseline";
     }).catch(error => {
         console.error(error);
     });
 
-    // Get opponent's profileId from last 5 games, assuming at least 1 ranked 1v1 game is included here.
+    // Get opponent's profileId from last 50 games, assuming at least 1 ranked 1v1 game is included here.
     async function getOpponentProfileId(profileId) {
         const urlMatches = 'https://aoe2.net/api/player/matches?game=aoe2de&count=50&profile_id=' + profileId;
         try {
@@ -81,7 +101,7 @@ async function main() {
     async function getPlayerStats(profileId) {
         const urlPlayerStatus = `https://aoe2.net/api/nightbot/rank?game=aoe2de&leaderboard_id=3&profile_id=${profileId}&flag=false`;
         const urlRatingHistory = `https://aoe2.net/api/player/ratinghistory?game=aoe2de&leaderboard_id=3&profile_id=${profileId}&count=1000`;
-        const urlMatches = `https://aoe2.net/api/player/matches?game=aoe2de&count=50&profile_id=${profileId}`;
+        const urlMatches = `https://aoe2.net/api/player/matches?game=aoe2de&count=100&profile_id=${profileId}`;
 
         const regexPlayerName = /.*(?=\s\(\d+\))/;
         const regexPlayerElo = /\d+(?=\))/;
