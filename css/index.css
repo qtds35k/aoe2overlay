@@ -8,7 +8,7 @@ table {
     font-weight: bold;
     font-size: 40px;
     color: white;
-    text-shadow: 1px 1px white;
+    text-shadow: 1px 1px 5px white;
 }
 
 th,

@@ -2,19 +2,19 @@
     "color": [
         {
             "id": 1,
-            "string": "Blue"
+            "string": "#0000FF"
         },
         {
             "id": 2,
-            "string": "Red"
+            "string": "#FF0000"
         },
         {
             "id": 3,
-            "string": "Green"
+            "string": "#00FF00"
         },
         {
             "id": 4,
-            "string": "Yellow"
+            "string": "#FFFF00"
         },
         {
             "id": 5,
@@ -30,7 +30,7 @@
         },
         {
             "id": 8,
-            "string": "Orange"
+            "string": "#FFA500"
         }
     ],
     "civ": [

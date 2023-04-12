@@ -153,13 +153,15 @@ async function main() {
 
     function setTextShadow(playerNameId, colorCode) {
         $.getJSON(stringsLookupPath, function (stringsLookup) {
-            const lightColors = [4, 5];
+            const playerColor = stringsLookup.color.find(c => c.id === colorCode).string.toLowerCase();
+            document.getElementById(playerNameId).style.color = playerColor;
+
+            const lightColors = [3, 4, 5, 8];
             if (lightColors.includes(colorCode)) {
-                // css text-shadow works better with lower horizontal offset for light colors.
-                document.getElementById(playerNameId).style.textShadow = "1.5px 1.5px 5px " + stringsLookup.color.find(c => c.id === colorCode).string.toLowerCase();
+                document.getElementById(playerNameId).style.textShadow = "0px 0px 6.18px white";
                 return;
             }
-            document.getElementById(playerNameId).style.textShadow = "2px 2px 1px " + stringsLookup.color.find(c => c.id === colorCode).string.toLowerCase();
+            document.getElementById(playerNameId).style.textShadow = "0.618px 0.618px 3px white, -0.618px -0.618px 3px white, 0px 0px 6.18px white";
         });
     }
 }
