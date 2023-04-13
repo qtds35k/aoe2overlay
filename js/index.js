@@ -22,13 +22,26 @@ async function main() {
         document.getElementById("playerTotalGames1").innerText = playerStats.playerTotalGames;
         document.getElementById("playerWinrate1").innerText = playerStats.playerWinrate;
 
-        const images = []; // array to hold the image elements
-        // create image elements and add to the images array
+        const images = [];
         playerStats.lastUsedCivs.forEach((civ, index) => {
+            // civ emblem
+            if (index == 0) {
+                const img = document.createElement("img");
+                img.src = `img/emblems/${civ}.png`;
+                img.alt = civ;
+                img.style.position = "absolute";
+                img.style.bottom = "0";
+                img.style.left = "0";
+                img.style.width = "30%";
+                img.style.opacity = 0.5;
+                document.getElementById('lastUsedCivs1').appendChild(img);
+            }
+            
+            // civ icon
             const img = document.createElement("img");
-            img.src = `img/${civ}.png`;
+            img.src = `img/icons/${civ}.png`;
             img.alt = civ;
-            img.style.width = 90 - (10 * index) + "px"; // set width
+            img.style.width = 90 - (10 * index) + "px";
             img.style.backgroundColor = "black";
             images.unshift(img); // add to the beginning of the array
         });
@@ -54,11 +67,24 @@ async function main() {
         document.getElementById("playerTotalGames2").innerText = playerStats.playerTotalGames;
         document.getElementById("playerWinrate2").innerText = playerStats.playerWinrate;
 
-        const images = []; // array to hold the image elements
-        // create image elements and add to the images array
+        const images = [];
         playerStats.lastUsedCivs.forEach((civ, index) => {
+            // civ emblem
+            if (index == 0) {
+                const img = document.createElement("img");
+                img.src = `img/emblems/${civ}.png`;
+                img.alt = civ;
+                img.style.position = "absolute";
+                img.style.bottom = "0";
+                img.style.right = "0";
+                img.style.width = "30%";
+                img.style.opacity = 0.5;
+                document.getElementById('lastUsedCivs2').appendChild(img);
+            }
+            
+            // civ icon
             const img = document.createElement("img");
-            img.src = `img/${civ}.png`;
+            img.src = `img/icons/${civ}.png`;
             img.alt = civ;
             img.style.width = 90 - (10 * index) + "px"; // set width
             img.style.backgroundColor = "black";
