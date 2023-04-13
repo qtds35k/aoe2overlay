@@ -1,4 +1,4 @@
-# Look, I don't know jack shit about front-end development -- 99% of this respo is hacked out using ChatGPT.
+# Bruh I don't know jack shit about front-end development -- 99% of this respo is hacked out using ChatGPT.
 
 ## Usage
 1. Find your aoe2.net profileId:
