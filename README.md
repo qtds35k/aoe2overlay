@@ -3,7 +3,7 @@
 ## Usage
 1. Find your aoe2.net profileId:
     1. Go to https://aoe2.net/#aoe2de-matches-my-recent-matches with you steam account signed in.
-    1. Click on your name in any match -> Profile -> get your profileId in the url. E.g. copy `2510223` in `https://aoe2.net/#aoe2de-profile-2510223` .
+    1. Click on your name in any match -> Profile -> get your profileId in the url, e.g. copy `2510223` in `https://aoe2.net/#aoe2de-profile-2510223` .
 1. In your streaming tool, add a Browser Source:
     - Set URL as `https://qtds35k.github.io/aoe2overlay/?profileId=${YOUR_PROFILE_ID}`, e.g. `https://qtds35k.github.io/aoe2overlay/?profileId=2510223` .
     - Specify width and height according to your scene layout, typically a landscape orientation, e.g.
