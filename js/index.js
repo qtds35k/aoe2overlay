@@ -6,11 +6,14 @@ async function main() {
     const gitRepoName = '/aoe2overlay'; // for github page endpoint
     const stringsLookupPath = `${gitRepoName}/resource/strings.json`;
 
+    const any1v1 = urlParams.get('any1v1') === 'true';
+
     const streamerProfileId = urlParams.get('profileId');
-    const opponentProfileId = await getOpponentProfileId(streamerProfileId);
+    const opponentProfileId = await getOpponentProfileId(streamerProfileId, any1v1);
+
 
     // Populate streamer section.
-    getPlayerStats(streamerProfileId).then(playerStats => {
+    getPlayerStats(streamerProfileId, any1v1).then(playerStats => {
         console.log(playerStats);
 
         document.getElementById("playerName1").innerText = playerStats.playerName;
@@ -36,7 +39,7 @@ async function main() {
                 img.style.opacity = 0.5;
                 document.getElementById('lastUsedCivs1').appendChild(img);
             }
-            
+
             // civ icon
             const img = document.createElement("img");
             img.src = `img/icons/${civ}.png`;
@@ -58,7 +61,7 @@ async function main() {
     });
 
     // Populate opponent section.
-    getPlayerStats(opponentProfileId).then(playerStats => {
+    getPlayerStats(opponentProfileId, any1v1).then(playerStats => {
         console.log(playerStats);
 
         document.getElementById("playerName2").innerText = playerStats.playerName;
@@ -81,7 +84,7 @@ async function main() {
                 img.style.opacity = 0.5;
                 document.getElementById('lastUsedCivs2').appendChild(img);
             }
-            
+
             // civ icon
             const img = document.createElement("img");
             img.src = `img/icons/${civ}.png`;
@@ -103,13 +106,13 @@ async function main() {
     });
 
     // Get opponent's profileId from last 50 games, assuming at least 1 ranked 1v1 game is included here.
-    async function getOpponentProfileId(profileId) {
+    async function getOpponentProfileId(profileId, any1v1) {
         const urlMatches = 'https://aoe2.net/api/player/matches?game=aoe2de&count=50&profile_id=' + profileId;
         try {
             const response = await fetch(corsProxyUrl + encodeURIComponent(urlMatches));
             const data = await response.json();
 
-            const filteredMatches = data.filter(match => match.leaderboard_id === 3)[0];
+            const filteredMatches = any1v1 ? data.filter(match => match.num_players === 2)[0] : data.filter(match => match.leaderboard_id === 3)[0];
             console.log(filteredMatches.players);
 
             for (let i = 0; i < filteredMatches.players.length; i++) {
@@ -125,7 +128,7 @@ async function main() {
     }
 
     // Get player's name, current/max elo, total games played, winrate, and used civs in last 5 ranked 1v1 games.
-    async function getPlayerStats(profileId) {
+    async function getPlayerStats(profileId, any1v1) {
         const urlPlayerStatus = `https://aoe2.net/api/nightbot/rank?game=aoe2de&leaderboard_id=3&profile_id=${profileId}&flag=false`;
         const urlRatingHistory = `https://aoe2.net/api/player/ratinghistory?game=aoe2de&leaderboard_id=3&profile_id=${profileId}&count=1000`;
         const urlMatches = `https://aoe2.net/api/player/matches?game=aoe2de&count=100&profile_id=${profileId}`;
@@ -141,16 +144,16 @@ async function main() {
             $.getJSON(corsProxyUrl + encodeURIComponent(urlMatches)),
             $.getJSON(stringsLookupPath)
         ]);
-        const playerName = playerStatus.match(regexPlayerName)[0];
-        const playerCurrentElo = playerStatus.match(regexPlayerElo)[0];
-        const playerTotalGames = playerStatus.match(regexPlayerTotalGames)[0];
-        const playerWinrate = playerStatus.match(regexPlayerWinrate)[0];
+        let playerName = playerStatus.match(regexPlayerName)?.[0] ?? "???";
+        const playerCurrentElo = playerStatus.match(regexPlayerElo)?.[0] ?? "???";;
+        const playerTotalGames = playerStatus.match(regexPlayerTotalGames)?.[0] ?? "???";
+        const playerWinrate = playerStatus.match(regexPlayerWinrate)?.[0] ?? "???";
         const ratings = ratingHistory.map(entry => entry.rating);
         const playerMaxElo = Math.max(...ratings);
         var lastPlayerColor;
 
         // Number of last used civs configured here.
-        const filteredMatches = matches.filter(match => match.leaderboard_id === 3).slice(0, 7);
+        const filteredMatches = any1v1 ? matches.filter(match => match.num_players === 2).slice(0, 7) : matches.filter(match => match.leaderboard_id === 3).slice(0, 7);
         const lastUsedCivs = [];
 
         for (let i = 0; i < filteredMatches.length; i++) {
@@ -159,6 +162,9 @@ async function main() {
             if (i == 0) {
                 lastPlayerColor = player.color;
                 lastOpponentColor = opponent.color;
+                if (playerName === "???") {
+                      playerName = player.name;
+                }
             }
             const civCode = player.civ;
             const civString = stringsLookup.civ.find(c => c.id === civCode).string;
