@@ -163,7 +163,7 @@ async function main() {
                 lastPlayerColor = player.color;
                 lastOpponentColor = opponent.color;
                 if (playerName === "???") {
-                      playerName = player.name;
+                    playerName = player.name;
                 }
             }
             const civCode = player.civ;
@@ -196,6 +196,11 @@ async function main() {
             document.getElementById(playerNameId).style.textShadow = "0.618px 0.618px 3px white, -0.618px -0.618px 3px white, 0px 0px 6.18px white";
         });
     }
+
+    // Refresh the page every 7 minutes
+    setInterval(() => {
+        location.reload();
+    }, 420000);
 }
 
 // Actual execution happens here.
