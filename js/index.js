@@ -1,207 +1,242 @@
-// Reason for this wrapping main() is because we need to await opponentProfileId to be resolved.
-async function main() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const corsProxyUrl = 'https://api.allorigins.win/raw?url=';
-    // const gitRepoName = ''; // for local testing
-    const gitRepoName = '/aoe2overlay'; // for github page endpoint
-    const stringsLookupPath = `${gitRepoName}/resource/strings.json`;
+const API_BASE = "http://localhost:8000";
+const REFRESH_INTERVAL_MS = 420000;
+const overlayUtils = typeof window !== "undefined" && window.OverlayUtils
+    ? window.OverlayUtils
+    : require("./utils");
+const {
+    UNKNOWN_VALUE,
+    parseNightbotResponse,
+    getMaxElo,
+    getLeaderboardWinrate,
+    getRelevantMatches,
+    getOpponentFromMatch,
+    getPlayerFromMatch,
+    getLastUsedCivs,
+    isLightColor
+} = overlayUtils;
 
-    const any1v1 = urlParams.get('any1v1') === 'true';
-
-    const streamerProfileId = urlParams.get('profileId');
-    const opponentProfileId = await getOpponentProfileId(streamerProfileId, any1v1);
-
-
-    // Populate streamer section.
-    getPlayerStats(streamerProfileId, any1v1).then(playerStats => {
-        console.log(playerStats);
-
-        document.getElementById("playerName1").innerText = playerStats.playerName;
-        setTextShadow("playerName1", playerStats.lastPlayerColor);
-        // Setting opponent color here; if overlay's not displaying ongoing match, opponent might have had more games than streamer
-        setTextShadow("playerName2", playerStats.lastOpponentColor);
-        document.getElementById("playerCurrentElo1").innerText = playerStats.playerCurrentElo;
-        document.getElementById("playerMaxElo1").innerText = playerStats.playerMaxElo;
-        document.getElementById("playerTotalGames1").innerText = playerStats.playerTotalGames;
-        document.getElementById("playerWinrate1").innerText = playerStats.playerWinrate;
-
-        const images = [];
-        playerStats.lastUsedCivs.forEach((civ, index) => {
-            // civ emblem
-            if (index == 0) {
-                const img = document.createElement("img");
-                img.src = `img/emblems/${civ}.png`;
-                img.alt = civ;
-                img.style.position = "absolute";
-                img.style.bottom = "0";
-                img.style.left = "0";
-                img.style.width = "30%";
-                img.style.opacity = 0.5;
-                document.getElementById('lastUsedCivs1').appendChild(img);
-            }
-
-            // civ icon
-            const img = document.createElement("img");
-            img.src = `img/icons/${civ}.png`;
-            img.alt = civ;
-            img.style.width = 90 - (10 * index) + "px";
-            img.style.backgroundColor = "black";
-            images.unshift(img); // add to the beginning of the array
-        });
-
-        const lastUsedCivsElement = document.getElementById("lastUsedCivs1");
-        images.forEach(img => lastUsedCivsElement.prepend(img)); // add images to the table cell
-
-        // set table cell styles
-        lastUsedCivsElement.style.display = "flex";
-        lastUsedCivsElement.style.flexDirection = "row-reverse";
-        lastUsedCivsElement.style.alignItems = "baseline";
-    }).catch(error => {
-        console.error(error);
-    });
-
-    // Populate opponent section.
-    getPlayerStats(opponentProfileId, any1v1).then(playerStats => {
-        console.log(playerStats);
-
-        document.getElementById("playerName2").innerText = playerStats.playerName;
-        document.getElementById("playerCurrentElo2").innerText = playerStats.playerCurrentElo;
-        document.getElementById("playerMaxElo2").innerText = playerStats.playerMaxElo;
-        document.getElementById("playerTotalGames2").innerText = playerStats.playerTotalGames;
-        document.getElementById("playerWinrate2").innerText = playerStats.playerWinrate;
-
-        const images = [];
-        playerStats.lastUsedCivs.forEach((civ, index) => {
-            // civ emblem
-            if (index == 0) {
-                const img = document.createElement("img");
-                img.src = `img/emblems/${civ}.png`;
-                img.alt = civ;
-                img.style.position = "absolute";
-                img.style.bottom = "0";
-                img.style.right = "0";
-                img.style.width = "30%";
-                img.style.opacity = 0.5;
-                document.getElementById('lastUsedCivs2').appendChild(img);
-            }
-
-            // civ icon
-            const img = document.createElement("img");
-            img.src = `img/icons/${civ}.png`;
-            img.alt = civ;
-            img.style.width = 90 - (10 * index) + "px"; // set width
-            img.style.backgroundColor = "black";
-            images.push(img); // add to the end of the array
-        });
-
-        const lastUsedCivsElement = document.getElementById("lastUsedCivs2");
-        images.forEach(img => lastUsedCivsElement.appendChild(img)); // add images to the table cell
-
-        // set table cell styles
-        lastUsedCivsElement.style.display = "flex";
-        lastUsedCivsElement.style.flexDirection = "row";
-        lastUsedCivsElement.style.alignItems = "baseline";
-    }).catch(error => {
-        console.error(error);
-    });
-
-    // Get opponent's profileId from last 50 games, assuming at least 1 ranked 1v1 game is included here.
-    async function getOpponentProfileId(profileId, any1v1) {
-        const urlMatches = 'https://aoe2.net/api/player/matches?game=aoe2de&count=50&profile_id=' + profileId;
-        try {
-            const response = await fetch(corsProxyUrl + encodeURIComponent(urlMatches));
-            const data = await response.json();
-
-            const filteredMatches = any1v1 ? data.filter(match => match.num_players === 2)[0] : data.filter(match => match.leaderboard_id === 3)[0];
-            console.log(filteredMatches.players);
-
-            for (let i = 0; i < filteredMatches.players.length; i++) {
-                const player = filteredMatches.players[i];
-                if (player.profile_id !== parseInt(streamerProfileId)) {
-                    const opponentProfileId = player.profile_id;
-                    return opponentProfileId.toString();
-                }
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
-    // Get player's name, current/max elo, total games played, winrate, and used civs in last 5 ranked 1v1 games.
-    async function getPlayerStats(profileId, any1v1) {
-        const urlPlayerStatus = `https://aoe2.net/api/nightbot/rank?game=aoe2de&leaderboard_id=3&profile_id=${profileId}&flag=false`;
-        const urlRatingHistory = `https://aoe2.net/api/player/ratinghistory?game=aoe2de&leaderboard_id=3&profile_id=${profileId}&count=1000`;
-        const urlMatches = `https://aoe2.net/api/player/matches?game=aoe2de&count=100&profile_id=${profileId}`;
-
-        const regexPlayerName = /.*(?=\s\(\d+\))/;
-        const regexPlayerElo = /\d+(?=\))/;
-        const regexPlayerWinrate = /\d+%/;
-        const regexPlayerTotalGames = /(\d{1,3},)*(\d+)(?=\sgames)/;
-
-        const [playerStatus, ratingHistory, matches, stringsLookup] = await Promise.all([
-            $.ajax({ url: corsProxyUrl + encodeURIComponent(urlPlayerStatus) }),
-            $.getJSON(corsProxyUrl + encodeURIComponent(urlRatingHistory)),
-            $.getJSON(corsProxyUrl + encodeURIComponent(urlMatches)),
-            $.getJSON(stringsLookupPath)
-        ]);
-        let playerName = playerStatus.match(regexPlayerName)?.[0] ?? "???";
-        const playerCurrentElo = playerStatus.match(regexPlayerElo)?.[0] ?? "???";;
-        const playerTotalGames = playerStatus.match(regexPlayerTotalGames)?.[0] ?? "???";
-        const playerWinrate = playerStatus.match(regexPlayerWinrate)?.[0] ?? "???";
-        const ratings = ratingHistory.map(entry => entry.rating);
-        const playerMaxElo = Math.max(...ratings);
-        var lastPlayerColor;
-
-        // Number of last used civs configured here.
-        const filteredMatches = any1v1 ? matches.filter(match => match.num_players === 2).slice(0, 7) : matches.filter(match => match.leaderboard_id === 3).slice(0, 7);
-        const lastUsedCivs = [];
-
-        for (let i = 0; i < filteredMatches.length; i++) {
-            const player = filteredMatches[i].players.find(p => p.profile_id == profileId);
-            const opponent = filteredMatches[i].players.find(p => p.profile_id != profileId);
-            if (i == 0) {
-                lastPlayerColor = player.color;
-                lastOpponentColor = opponent.color;
-                if (playerName === "???") {
-                    playerName = player.name;
-                }
-            }
-            const civCode = player.civ;
-            const civString = stringsLookup.civ.find(c => c.id === civCode).string;
-            lastUsedCivs.push(civString.toLowerCase());
-        }
-
-        return {
-            playerName,
-            playerCurrentElo,
-            playerTotalGames,
-            playerWinrate,
-            playerMaxElo,
-            lastUsedCivs,
-            lastPlayerColor,
-            lastOpponentColor
-        };
-    }
-
-    function setTextShadow(playerNameId, colorCode) {
-        $.getJSON(stringsLookupPath, function (stringsLookup) {
-            const playerColor = stringsLookup.color.find(c => c.id === colorCode).string.toLowerCase();
-            document.getElementById(playerNameId).style.color = playerColor;
-
-            const lightColors = [3, 4, 5, 8];
-            if (lightColors.includes(colorCode)) {
-                document.getElementById(playerNameId).style.textShadow = "0px 0px 6.18px white";
-                return;
-            }
-            document.getElementById(playerNameId).style.textShadow = "0.618px 0.618px 3px white, -0.618px -0.618px 3px white, 0px 0px 6.18px white";
-        });
-    }
-
-    // Refresh the page every 7 minutes
-    setInterval(() => {
-        location.reload();
-    }, 420000);
+function getRepoBasePath() {
+    const pathSegments = window.location.pathname.split("/").filter(Boolean);
+    return pathSegments[0] === "aoe2overlay" ? "/aoe2overlay" : "";
 }
 
-// Actual execution happens here.
+function createUnknownPlayerStats() {
+    return {
+        playerName: UNKNOWN_VALUE,
+        playerCurrentElo: UNKNOWN_VALUE,
+        playerTotalGames: UNKNOWN_VALUE,
+        playerWinrate: UNKNOWN_VALUE,
+        playerMaxElo: UNKNOWN_VALUE,
+        lastUsedCivs: [],
+        lastPlayerColor: null,
+        lastOpponentColor: null
+    };
+}
+
+function createFallbackCivBadge(civEntry, width) {
+    const badge = document.createElement("span");
+    badge.innerText = civEntry?.string?.slice(0, 3)?.toUpperCase() ?? "???";
+    badge.style.width = `${width}px`;
+    badge.style.height = `${width}px`;
+    badge.style.display = "inline-flex";
+    badge.style.alignItems = "center";
+    badge.style.justifyContent = "center";
+    badge.style.backgroundColor = "black";
+    badge.style.color = "white";
+    badge.style.fontSize = "18px";
+    badge.style.fontWeight = "bold";
+    return badge;
+}
+
+function createCivImage(filename, altText, width) {
+    const image = document.createElement("img");
+    image.src = filename;
+    image.alt = altText;
+    image.style.width = `${width}px`;
+    image.style.backgroundColor = "black";
+    return image;
+}
+
+function renderCivHistory(containerId, civEntries, side) {
+    const container = document.getElementById(containerId);
+    container.replaceChildren();
+    container.style.position = "relative";
+    container.style.display = "flex";
+    container.style.flexDirection = side === "left" ? "row-reverse" : "row";
+    container.style.alignItems = "baseline";
+
+    civEntries.forEach((civEntry, index) => {
+        if (index === 0 && civEntry?.emblem) {
+            const emblem = document.createElement("img");
+            emblem.src = `img/emblems/${civEntry.emblem}`;
+            emblem.alt = civEntry.string;
+            emblem.style.position = "absolute";
+            emblem.style.bottom = "0";
+            emblem.style[side === "left" ? "left" : "right"] = "0";
+            emblem.style.width = "30%";
+            emblem.style.opacity = "0.5";
+            container.appendChild(emblem);
+        }
+
+        const width = 90 - (10 * index);
+        const iconElement = civEntry?.icon
+            ? createCivImage(`img/icons/${civEntry.icon}`, civEntry.string, width)
+            : createFallbackCivBadge(civEntry, width);
+        container.appendChild(iconElement);
+    });
+}
+
+function applyMatchColors(playerStats, stringsLookup) {
+    setTextShadow("playerName1", playerStats.lastPlayerColor, stringsLookup);
+    setTextShadow("playerName2", playerStats.lastOpponentColor, stringsLookup);
+}
+
+function renderPlayerStats(side, playerStats) {
+    document.getElementById(`playerName${side}`).innerText = playerStats.playerName;
+    document.getElementById(`playerCurrentElo${side}`).innerText = playerStats.playerCurrentElo;
+    document.getElementById(`playerMaxElo${side}`).innerText = playerStats.playerMaxElo;
+    document.getElementById(`playerTotalGames${side}`).innerText = playerStats.playerTotalGames;
+    document.getElementById(`playerWinrate${side}`).innerText = playerStats.playerWinrate;
+    renderCivHistory(`lastUsedCivs${side}`, playerStats.lastUsedCivs, side === 1 ? "left" : "right");
+}
+
+function setTextShadow(playerNameId, colorCode, stringsLookup) {
+    const playerColor = stringsLookup.color.find(color => color.id === colorCode);
+    const playerNameElement = document.getElementById(playerNameId);
+    if (!playerColor || !playerNameElement) {
+        return;
+    }
+
+    playerNameElement.style.color = playerColor.string.toLowerCase();
+
+    if (isLightColor(colorCode)) {
+        playerNameElement.style.textShadow = "0px 0px 6.18px white";
+        return;
+    }
+
+    playerNameElement.style.textShadow = "0.618px 0.618px 3px white, -0.618px -0.618px 3px white, 0px 0px 6.18px white";
+}
+
+async function getOpponentProfileId(profileId, any1v1) {
+    const urlMatches = `${API_BASE}/api/matches?profile_ids=${profileId}`;
+
+    try {
+        const response = await fetch(urlMatches);
+        const data = await response.json();
+        const filteredMatch = getRelevantMatches(data?.matches ?? data, any1v1, 1)[0];
+
+        if (!filteredMatch) {
+            return null;
+        }
+
+        const opponent = getOpponentFromMatch(filteredMatch, profileId);
+        return opponent?.profile_id?.toString() ?? null;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
+async function getPlayerStats(profileId, any1v1, stringsLookup) {
+    if (!profileId) {
+        return createUnknownPlayerStats();
+    }
+
+    const urlPlayerStatus = `${API_BASE}/api/nightbot/rank?profile_id=${profileId}`;
+    const urlProfile = `${API_BASE}/api/profiles/${profileId}`;
+    const urlMatches = `${API_BASE}/api/matches?profile_ids=${profileId}`;
+
+    const [playerStatusRaw, profileData, matchesResponse] = await Promise.all([
+        $.ajax({ url: urlPlayerStatus }),
+        $.getJSON(urlProfile),
+        $.getJSON(urlMatches)
+    ]);
+
+    const parsedPlayerStatus = parseNightbotResponse(playerStatusRaw);
+    const rm1v1Leaderboard = profileData?.leaderboards?.find(leaderboard => leaderboard.leaderboardId === "rm_1v1") ?? null;
+    const rm1v1Ratings = profileData?.ratings?.find(ratingSet => ratingSet.leaderboardId === "rm_1v1")?.ratings ?? [];
+    const matches = Array.isArray(matchesResponse) ? matchesResponse : matchesResponse?.matches ?? [];
+
+    let playerName = parsedPlayerStatus.playerName !== UNKNOWN_VALUE
+        ? parsedPlayerStatus.playerName
+        : profileData?.name ?? UNKNOWN_VALUE;
+    const playerCurrentElo = parsedPlayerStatus.playerCurrentElo !== UNKNOWN_VALUE
+        ? parsedPlayerStatus.playerCurrentElo
+        : rm1v1Leaderboard?.rating?.toString() ?? UNKNOWN_VALUE;
+    const playerTotalGames = parsedPlayerStatus.playerTotalGames !== UNKNOWN_VALUE
+        ? parsedPlayerStatus.playerTotalGames
+        : rm1v1Leaderboard?.games?.toLocaleString?.() ?? UNKNOWN_VALUE;
+    const playerWinrate = parsedPlayerStatus.playerWinrate !== UNKNOWN_VALUE
+        ? parsedPlayerStatus.playerWinrate
+        : getLeaderboardWinrate(rm1v1Leaderboard);
+    const playerMaxElo = rm1v1Leaderboard?.maxRating ?? getMaxElo(rm1v1Ratings);
+    let lastPlayerColor = null;
+    let lastOpponentColor = null;
+    const relevantMatches = getRelevantMatches(matches, any1v1);
+    const lastUsedCivs = getLastUsedCivs(matches, profileId, stringsLookup, any1v1);
+    const latestMatch = relevantMatches[0];
+    const latestPlayer = getPlayerFromMatch(latestMatch, profileId);
+    const latestOpponent = getOpponentFromMatch(latestMatch, profileId);
+
+    if (latestPlayer) {
+        lastPlayerColor = latestPlayer.color ?? null;
+        lastOpponentColor = latestOpponent?.color ?? null;
+        if (playerName === UNKNOWN_VALUE && latestPlayer.name) {
+            playerName = latestPlayer.name;
+        }
+    }
+
+    return {
+        playerName,
+        playerCurrentElo,
+        playerTotalGames,
+        playerWinrate,
+        playerMaxElo,
+        lastUsedCivs,
+        lastPlayerColor,
+        lastOpponentColor
+    };
+}
+
+async function main() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const stringsLookupPath = `${getRepoBasePath()}/resource/strings.json`;
+    const any1v1 = urlParams.get("any1v1") === "true";
+    const streamerProfileId = urlParams.get("profileId");
+    // Manual mode: streamer can pass ?opponent=<profile_id> to bypass broken match detection
+    const manualOpponentId = urlParams.get("opponent") ?? null;
+
+    if (!streamerProfileId) {
+        return;
+    }
+
+    try {
+        const stringsLookup = await $.getJSON(stringsLookupPath);
+        // Use manual opponent if provided, otherwise attempt API detection (may return null)
+        const opponentProfileId = manualOpponentId
+            ?? await getOpponentProfileId(streamerProfileId, any1v1);
+        const [streamerResult, opponentResult] = await Promise.allSettled([
+            getPlayerStats(streamerProfileId, any1v1, stringsLookup),
+            getPlayerStats(opponentProfileId, any1v1, stringsLookup)
+        ]);
+
+        const streamerStats = streamerResult.status === "fulfilled"
+            ? streamerResult.value
+            : createUnknownPlayerStats();
+        const opponentStats = opponentResult.status === "fulfilled"
+            ? opponentResult.value
+            : createUnknownPlayerStats();
+
+        applyMatchColors(streamerStats, stringsLookup);
+        renderPlayerStats(1, streamerStats);
+        renderPlayerStats(2, opponentStats);
+    } catch (error) {
+        console.error(error);
+    }
+
+    setInterval(() => {
+        location.reload();
+    }, REFRESH_INTERVAL_MS);
+}
+
 main();

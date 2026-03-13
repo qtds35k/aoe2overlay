@@ -36,171 +36,416 @@
     "civ": [
         {
             "id": 1,
-            "string": "Britons"
+            "string": "Britons",
+            "slug": "britons",
+            "icon": "britons.png",
+            "emblem": "britons.png"
         },
         {
             "id": 2,
-            "string": "Franks"
+            "string": "Franks",
+            "slug": "franks",
+            "icon": "franks.png",
+            "emblem": "franks.png"
         },
         {
             "id": 3,
-            "string": "Goths"
+            "string": "Goths",
+            "slug": "goths",
+            "icon": "goths.png",
+            "emblem": "goths.png"
         },
         {
             "id": 4,
-            "string": "Teutons"
+            "string": "Teutons",
+            "slug": "teutons",
+            "icon": "teutons.png",
+            "emblem": "teutons.png"
         },
         {
             "id": 5,
-            "string": "Japanese"
+            "string": "Japanese",
+            "slug": "japanese",
+            "icon": "japanese.png",
+            "emblem": "japanese.png"
         },
         {
             "id": 6,
-            "string": "Chinese"
+            "string": "Chinese",
+            "slug": "chinese",
+            "icon": "chinese.png",
+            "emblem": "chinese.png"
         },
         {
             "id": 7,
-            "string": "Byzantines"
+            "string": "Byzantines",
+            "slug": "byzantines",
+            "icon": "byzantines.png",
+            "emblem": "byzantines.png"
         },
         {
             "id": 8,
-            "string": "Persians"
+            "string": "Persians",
+            "slug": "persians",
+            "icon": "persians.png",
+            "emblem": "persians.png"
         },
         {
             "id": 9,
-            "string": "Saracens"
+            "string": "Saracens",
+            "slug": "saracens",
+            "icon": "saracens.png",
+            "emblem": "saracens.png"
         },
         {
             "id": 10,
-            "string": "Turks"
+            "string": "Turks",
+            "slug": "turks",
+            "icon": "turks.png",
+            "emblem": "turks.png"
         },
         {
             "id": 11,
-            "string": "Vikings"
+            "string": "Vikings",
+            "slug": "vikings",
+            "icon": "vikings.png",
+            "emblem": "vikings.png"
         },
         {
             "id": 12,
-            "string": "Mongols"
+            "string": "Mongols",
+            "slug": "mongols",
+            "icon": "mongols.png",
+            "emblem": "mongols.png"
         },
         {
             "id": 13,
-            "string": "Celts"
+            "string": "Celts",
+            "slug": "celts",
+            "icon": "celts.png",
+            "emblem": "celts.png"
         },
         {
             "id": 14,
-            "string": "Spanish"
+            "string": "Spanish",
+            "slug": "spanish",
+            "icon": "spanish.png",
+            "emblem": "spanish.png"
         },
         {
             "id": 15,
-            "string": "Aztecs"
+            "string": "Aztecs",
+            "slug": "aztecs",
+            "icon": "aztecs.png",
+            "emblem": "aztecs.png"
         },
         {
             "id": 16,
-            "string": "Mayans"
+            "string": "Maya",
+            "slug": "maya",
+            "icon": "mayans.png",
+            "emblem": "mayans.png"
         },
         {
             "id": 17,
-            "string": "Huns"
+            "string": "Huns",
+            "slug": "huns",
+            "icon": "huns.png",
+            "emblem": "huns.png"
         },
         {
             "id": 18,
-            "string": "Koreans"
+            "string": "Koreans",
+            "slug": "koreans",
+            "icon": "koreans.png",
+            "emblem": "koreans.png"
         },
         {
             "id": 19,
-            "string": "Italians"
+            "string": "Italians",
+            "slug": "italians",
+            "icon": "italians.png",
+            "emblem": "italians.png"
         },
         {
             "id": 20,
-            "string": "Hindustanis"
+            "string": "Hindustanis",
+            "slug": "hindustanis",
+            "icon": "indians.png",
+            "emblem": "indians.png"
         },
         {
             "id": 21,
-            "string": "Incas"
+            "string": "Inca",
+            "slug": "inca",
+            "icon": "incas.png",
+            "emblem": "incas.png"
         },
         {
             "id": 22,
-            "string": "Magyars"
+            "string": "Magyars",
+            "slug": "magyars",
+            "icon": "magyars.png",
+            "emblem": "magyars.png"
         },
         {
             "id": 23,
-            "string": "Slavs"
+            "string": "Slavs",
+            "slug": "slavs",
+            "icon": "slavs.png",
+            "emblem": "slavs.png"
         },
         {
             "id": 24,
-            "string": "Portuguese"
+            "string": "Portuguese",
+            "slug": "portuguese",
+            "icon": "portuguese.png",
+            "emblem": "portuguese.png"
         },
         {
             "id": 25,
-            "string": "Ethiopians"
+            "string": "Ethiopians",
+            "slug": "ethiopians",
+            "icon": "ethiopians.png",
+            "emblem": "ethiopians.png"
         },
         {
             "id": 26,
-            "string": "Malians"
+            "string": "Malians",
+            "slug": "malians",
+            "icon": "malians.png",
+            "emblem": "malians.png"
         },
         {
             "id": 27,
-            "string": "Berbers"
+            "string": "Berbers",
+            "slug": "berbers",
+            "icon": "berbers.png",
+            "emblem": "berber.png"
         },
         {
             "id": 28,
-            "string": "Khmer"
+            "string": "Khmer",
+            "slug": "khmer",
+            "icon": "khmer.png",
+            "emblem": "khmer.png"
         },
         {
             "id": 29,
-            "string": "Malay"
+            "string": "Malay",
+            "slug": "malay",
+            "icon": "malay.png",
+            "emblem": "malay.png"
         },
         {
             "id": 30,
-            "string": "Burmese"
+            "string": "Burmese",
+            "slug": "burmese",
+            "icon": "burmese.png",
+            "emblem": "burmese.png"
         },
         {
             "id": 31,
-            "string": "Vietnamese"
+            "string": "Vietnamese",
+            "slug": "vietnamese",
+            "icon": "vietnamese.png",
+            "emblem": "vietnamese.png"
         },
         {
             "id": 32,
-            "string": "Bulgarians"
+            "string": "Bulgarians",
+            "slug": "bulgarians",
+            "icon": "bulgarians.png",
+            "emblem": "bulgarians.png"
         },
         {
             "id": 33,
-            "string": "Tatars"
+            "string": "Tatars",
+            "slug": "tatars",
+            "icon": "tatars.png",
+            "emblem": "tatars.png"
         },
         {
             "id": 34,
-            "string": "Cumans"
+            "string": "Cumans",
+            "slug": "cumans",
+            "icon": "cumans.png",
+            "emblem": "cumans.png"
         },
         {
             "id": 35,
-            "string": "Lithuanians"
+            "string": "Lithuanians",
+            "slug": "lithuanians",
+            "icon": "lithuanians.png",
+            "emblem": "lithuanians.png"
         },
         {
             "id": 36,
-            "string": "Burgundians"
+            "string": "Burgundians",
+            "slug": "burgundians",
+            "icon": "burgundians.png",
+            "emblem": "burgundians.png"
         },
         {
             "id": 37,
-            "string": "Sicilians"
+            "string": "Sicilians",
+            "slug": "sicilians",
+            "icon": "sicilians.png",
+            "emblem": "sicilians.png"
         },
         {
             "id": 38,
-            "string": "Poles"
+            "string": "Poles",
+            "slug": "poles",
+            "icon": "poles.png",
+            "emblem": "poles.png"
         },
         {
             "id": 39,
-            "string": "Bohemians"
+            "string": "Bohemians",
+            "slug": "bohemians",
+            "icon": "bohemians.png",
+            "emblem": "bohemians.png"
         },
         {
             "id": 40,
-            "string": "Dravidians"
+            "string": "Dravidians",
+            "slug": "dravidians",
+            "icon": "dravidians.png",
+            "emblem": "dravidians.png"
         },
         {
             "id": 41,
-            "string": "Bengalis"
+            "string": "Bengalis",
+            "slug": "bengalis",
+            "icon": "bengalis.png",
+            "emblem": "bengalis.png"
         },
         {
             "id": 42,
-            "string": "Gurjaras"
+            "string": "Gurjaras",
+            "slug": "gurjaras",
+            "icon": "gurjaras.png",
+            "emblem": "gurjaras.png"
+        },
+        {
+            "id": 43,
+            "string": "Romans",
+            "slug": "romans",
+            "icon": "romans.png",
+            "emblem": "romans.png"
+        },
+        {
+            "id": 44,
+            "string": "Armenians",
+            "slug": "armenians",
+            "icon": "armenians.png",
+            "emblem": "armenians.png"
+        },
+        {
+            "id": 45,
+            "string": "Georgians",
+            "slug": "georgians",
+            "icon": "georgians.png",
+            "emblem": "georgians.png"
+        },
+        {
+            "id": 46,
+            "string": "Achaemenids",
+            "slug": "achaemenids",
+            "icon": "achaemenids.png",
+            "emblem": "achaemenids.png"
+        },
+        {
+            "id": 47,
+            "string": "Athenians",
+            "slug": "athenians",
+            "icon": "athenians.png",
+            "emblem": "athenians.png"
+        },
+        {
+            "id": 48,
+            "string": "Spartans",
+            "slug": "spartans",
+            "icon": "spartans.png",
+            "emblem": "spartans.png"
+        },
+        {
+            "id": 49,
+            "string": "Shu",
+            "slug": "shu",
+            "icon": "shu.png",
+            "emblem": "shu.png"
+        },
+        {
+            "id": 50,
+            "string": "Wu",
+            "slug": "wu",
+            "icon": "wu.png",
+            "emblem": "wu.png"
+        },
+        {
+            "id": 51,
+            "string": "Wei",
+            "slug": "wei",
+            "icon": "wei.png",
+            "emblem": "wei.png"
+        },
+        {
+            "id": 52,
+            "string": "Jurchens",
+            "slug": "jurchens",
+            "icon": "jurchens.png",
+            "emblem": "jurchens.png"
+        },
+        {
+            "id": 53,
+            "string": "Khitans",
+            "slug": "khitans",
+            "icon": "khitans.png",
+            "emblem": "khitans.png"
+        },
+        {
+            "id": 54,
+            "string": "Macedonians",
+            "slug": "macedonians",
+            "icon": "macedonians.png",
+            "emblem": "macedonians.png"
+        },
+        {
+            "id": 55,
+            "string": "Thracians",
+            "slug": "thracians",
+            "icon": "thracians.png",
+            "emblem": "thracians.png"
+        },
+        {
+            "id": 56,
+            "string": "Puru",
+            "slug": "puru",
+            "icon": "puru.png",
+            "emblem": "puru.png"
+        },
+        {
+            "id": 57,
+            "string": "Muisca",
+            "slug": "muisca",
+            "icon": "muisca.png",
+            "emblem": "muisca.png"
+        },
+        {
+            "id": 58,
+            "string": "Mapuche",
+            "slug": "mapuche",
+            "icon": "mapuche.png",
+            "emblem": "mapuche.png"
+        },
+        {
+            "id": 59,
+            "string": "Tupi",
+            "slug": "tupi",
+            "icon": "tupi.png",
+            "emblem": "tupi.png"
         }
     ]
 }
