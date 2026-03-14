@@ -182,7 +182,7 @@ async function getPlayerStats(profileId, any1v1, stringsLookup) {
         try {
             const civData = await $.getJSON(urlCivs);
             if (Array.isArray(civData) && civData.length > 0) {
-                lastUsedCivs = civData.slice(0, 7).map(c => getCivEntry(stringsLookup, c.slug));
+                lastUsedCivs = civData.slice(0, 7).map(c => getCivEntry(stringsLookup, c.slug) || getCivEntry(stringsLookup, c.name));
             }
         } catch (e) {
             // silently ignore — civs just won't show
