@@ -145,6 +145,7 @@ async function getPlayerStats(profileId, any1v1, stringsLookup) {
     const urlPlayerStatus = `${API_BASE}/api/nightbot/rank?profile_id=${profileId}`;
     const urlProfile = `${API_BASE}/api/profiles/${profileId}`;
     const urlMatches = `${API_BASE}/api/matches?profile_ids=${profileId}`;
+    const urlCivs = `${API_BASE}/api/civs/${profileId}`;
 
     const [playerStatusRaw, profileData, matchesResponse] = await Promise.all([
         $.ajax({ url: urlPlayerStatus }),
@@ -173,7 +174,20 @@ async function getPlayerStats(profileId, any1v1, stringsLookup) {
     let lastPlayerColor = null;
     let lastOpponentColor = null;
     const relevantMatches = getRelevantMatches(matches, any1v1);
-    const lastUsedCivs = getLastUsedCivs(matches, profileId, stringsLookup, any1v1);
+    let lastUsedCivs = getLastUsedCivs(matches, profileId, stringsLookup, any1v1);
+
+    // If no match history available, fall back to most-played civs from the API
+    if (lastUsedCivs.length === 0) {
+        try {
+            const civData = await $.getJSON(urlCivs);
+            if (Array.isArray(civData) && civData.length > 0) {
+                lastUsedCivs = civData.slice(0, 7).map(c => getCivEntry(stringsLookup, c.slug));
+            }
+        } catch (e) {
+            // silently ignore — civs just won't show
+        }
+    }
+
     const latestMatch = relevantMatches[0];
     const latestPlayer = getPlayerFromMatch(latestMatch, profileId);
     const latestOpponent = getOpponentFromMatch(latestMatch, profileId);
