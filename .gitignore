@@ -1,2 +1,4 @@
 workspace.code-workspace
 node_modules/
+.claude/
+CLAUDE.md
