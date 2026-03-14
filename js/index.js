@@ -11,6 +11,7 @@ const {
     getRelevantMatches,
     getOpponentFromMatch,
     getPlayerFromMatch,
+    getCivEntry,
     getLastUsedCivs,
     isLightColor
 } = overlayUtils;
