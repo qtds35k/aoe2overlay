@@ -67,24 +67,26 @@ function renderCivHistory(containerId, civEntries, side) {
     container.style.alignItems = "baseline";
 
     civEntries.forEach((civEntry, index) => {
-        if (index === 0 && civEntry?.emblem) {
-            const emblem = document.createElement("img");
-            emblem.src = `img/emblems/${civEntry.emblem}`;
-            emblem.alt = civEntry.string;
-            emblem.style.position = "absolute";
-            emblem.style.bottom = "0";
-            emblem.style[side === "left" ? "left" : "right"] = "0";
-            emblem.style.width = "30%";
-            emblem.style.opacity = "0.5";
-            container.appendChild(emblem);
-        }
-
         const width = 90 - (10 * index);
         const iconElement = civEntry?.icon
             ? createCivImage(`img/icons/${civEntry.icon}`, civEntry.string, width)
             : createFallbackCivBadge(civEntry, width);
         container.appendChild(iconElement);
     });
+}
+
+function renderBackgroundEmblem(side, civEntry) {
+    const container = document.getElementById(`backgroundEmblem${side}`);
+    if (!container) return;
+
+    container.replaceChildren();
+    if (civEntry?.emblem) {
+        const emblem = document.createElement("img");
+        emblem.src = `img/emblems/${civEntry.emblem}`;
+        emblem.alt = civEntry.string;
+        emblem.className = "backgroundEmblem";
+        container.appendChild(emblem);
+    }
 }
 
 function applyMatchColors(playerStats, stringsLookup) {
@@ -99,6 +101,7 @@ function renderPlayerStats(side, playerStats) {
     document.getElementById(`playerTotalGames${side}`).innerText = playerStats.playerTotalGames;
     document.getElementById(`playerWinrate${side}`).innerText = playerStats.playerWinrate;
     renderCivHistory(`lastUsedCivs${side}`, playerStats.lastUsedCivs, side === 1 ? "left" : "right");
+    renderBackgroundEmblem(side, playerStats.lastUsedCivs[0]);
 }
 
 function setTextShadow(playerNameId, colorCode, stringsLookup) {
