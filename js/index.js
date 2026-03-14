@@ -1,4 +1,4 @@
-const API_BASE = "http://localhost:8000";
+const API_BASE = "https://api.aoe2net.com";
 const REFRESH_INTERVAL_MS = 420000;
 const overlayUtils = typeof window !== "undefined" && window.OverlayUtils
     ? window.OverlayUtils
