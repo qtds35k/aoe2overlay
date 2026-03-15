@@ -54,20 +54,23 @@ function createCivImage(filename, altText, width) {
     image.src = filename;
     image.alt = altText;
     image.style.width = `${width}px`;
-    image.style.backgroundColor = "black";
+    image.className = "civIcon";
     return image;
 }
 
 function renderCivHistory(containerId, civEntries, side) {
+    console.log(`[CivHistory] Rendering for side ${side}, civs:`, civEntries.map(c => c.string));
     const container = document.getElementById(containerId);
     container.replaceChildren();
-    container.style.position = "relative";
-    container.style.display = "flex";
-    container.style.flexDirection = side === "left" ? "row-reverse" : "row";
-    container.style.alignItems = "baseline";
+    
+    // Symmetrical "Stand-off": Most recent icons meet in the center.
+    // Left player: Row-reverse puts index 0 (most recent/biggest) on the right.
+    // Right player: Row puts index 0 on the left.
+    container.style.flexDirection = side === "left" ? "row-reverse" : "row"; 
 
     civEntries.forEach((civEntry, index) => {
-        const width = 90 - (10 * index);
+        const width = 90 - (9 * index);
+        console.log(`[CivHistory] Icon ${civEntry.string} index ${index} width ${width}`);
         const iconElement = civEntry?.icon
             ? createCivImage(`img/icons/${civEntry.icon}`, civEntry.string, width)
             : createFallbackCivBadge(civEntry, width);
@@ -76,16 +79,18 @@ function renderCivHistory(containerId, civEntries, side) {
 }
 
 function renderBackgroundEmblem(side, civEntry) {
-    const container = document.getElementById(`backgroundEmblem${side}`);
-    if (!container) return;
+    const containerId = `backgroundEmblem${side}`;
+    const $container = $(`#${containerId}`);
+    
+    if ($container.length === 0) return;
 
-    container.replaceChildren();
-    if (civEntry?.emblem) {
+    $container.empty();
+    if (civEntry && civEntry.emblem) {
         const emblem = document.createElement("img");
         emblem.src = `img/emblems/${civEntry.emblem}`;
         emblem.alt = civEntry.string;
         emblem.className = "backgroundEmblem";
-        container.appendChild(emblem);
+        $container.append(emblem);
     }
 }
 
@@ -95,11 +100,25 @@ function applyMatchColors(playerStats, stringsLookup) {
 }
 
 function renderPlayerStats(side, playerStats) {
-    document.getElementById(`playerName${side}`).innerText = playerStats.playerName;
-    document.getElementById(`playerCurrentElo${side}`).innerText = playerStats.playerCurrentElo;
-    document.getElementById(`playerMaxElo${side}`).innerText = playerStats.playerMaxElo;
-    document.getElementById(`playerTotalGames${side}`).innerText = playerStats.playerTotalGames;
-    document.getElementById(`playerWinrate${side}`).innerText = playerStats.playerWinrate;
+    console.log(`[Render] Rendering stats for side ${side}:`, playerStats);
+    
+    const elements = {
+        playerName: `playerName${side}`,
+        playerCurrentElo: `playerCurrentElo${side}`,
+        playerMaxElo: `playerMaxElo${side}`,
+        playerTotalGames: `playerTotalGames${side}`,
+        playerWinrate: `playerWinrate${side}`
+    };
+
+    for (const [key, id] of Object.entries(elements)) {
+        const el = document.getElementById(id);
+        if (el) {
+            el.innerText = playerStats[key] ?? UNKNOWN_VALUE;
+        } else {
+            console.warn(`[Render] Element NOT FOUND: ${id}`);
+        }
+    }
+
     renderCivHistory(`lastUsedCivs${side}`, playerStats.lastUsedCivs, side === 1 ? "left" : "right");
     renderBackgroundEmblem(side, playerStats.lastUsedCivs[0]);
 }
@@ -122,19 +141,17 @@ function setTextShadow(playerNameId, colorCode, stringsLookup) {
 }
 
 async function getOpponentProfileId(profileId, any1v1) {
-    const urlMatches = `${API_BASE}/api/matches?profile_ids=${profileId}`;
+    const urlMatches = `https://data.aoe2companion.com/api/matches?profile_ids=${profileId}&leaderboard_ids=rm_1v1`;
 
     try {
         const response = await fetch(urlMatches);
         const data = await response.json();
         const filteredMatch = getRelevantMatches(data?.matches ?? data, any1v1, 1)[0];
 
-        if (!filteredMatch) {
-            return null;
-        }
+        if (!filteredMatch) return null;
 
         const opponent = getOpponentFromMatch(filteredMatch, profileId);
-        return opponent?.profile_id?.toString() ?? null;
+        return (opponent?.profile_id ?? opponent?.profileId)?.toString() ?? null;
     } catch (error) {
         console.error(error);
         return null;
@@ -148,7 +165,7 @@ async function getPlayerStats(profileId, any1v1, stringsLookup) {
 
     const urlPlayerStatus = `${API_BASE}/api/nightbot/rank?profile_id=${profileId}`;
     const urlProfile = `${API_BASE}/api/profiles/${profileId}`;
-    const urlMatches = `${API_BASE}/api/matches?profile_ids=${profileId}`;
+    const urlMatches = `https://data.aoe2companion.com/api/matches?profile_ids=${profileId}&leaderboard_ids=rm_1v1`;
     const urlCivs = `${API_BASE}/api/civs/${profileId}`;
 
     const [playerStatusRaw, profileData, matchesResponse] = await Promise.all([
@@ -257,4 +274,7 @@ async function main() {
     }, REFRESH_INTERVAL_MS);
 }
 
-main();
+$(document).ready(function() {
+    console.log("[Main] DOM Ready. Starting main...");
+    main();
+});

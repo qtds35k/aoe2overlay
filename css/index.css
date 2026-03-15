@@ -1,6 +1,11 @@
+* {
+    box-sizing: border-box;
+}
+
 table {
     border-collapse: collapse;
     width: 100%;
+    table-layout: fixed; /* Force equal column widths */
 }
 
 .playerName {
@@ -17,6 +22,16 @@ td {
     padding: 8px;
 }
 
+/* Specific widths for main layout columns */
+.main-column {
+    width: 50% !important;
+    max-width: 50% !important;
+    position: relative;
+    vertical-align: top;
+    overflow: hidden;
+    /* background-color: rgba(0, 255, 0, 0.1); */ /* Debug: Light green */
+}
+
 th {
     color: white;
 }
@@ -24,42 +39,98 @@ th {
 .statsHeader {
     font-family: "Goudy Old Style", serif;
     font-weight: bold;
-    font-size: 20px;
+    font-size: 14px; /* Smaller for robustness */
     color: pink;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.statsTable {
+    width: 100%;
+    margin: 5px auto;
+    table-layout: fixed; /* Crucial for equal columns */
+    border-spacing: 0;
 }
 
 .statsValue {
     font-family: "Goudy Old Style", serif;
-    font-size: 30px;
+    font-size: 22px; /* Smaller */
     color: white;
 }
 
 .statsValueCurrentElo {
     font-family: "Goudy Old Style", serif;
     font-weight: bold;
-    font-size: 35px;
+    font-size: 28px; /* Smaller */
     color: yellow;
 }
 
 .playerSection {
     position: relative;
-    overflow: hidden;
+    overflow: visible; /* Allow emblem to escape if needed */
+    min-height: 150px;
 }
 
 .backgroundEmblemContainer {
     position: absolute;
-    top: 0;
-    left: 0;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     width: 100%;
     height: 100%;
-    z-index: -1;
+    z-index: 0;
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: visible;
+    pointer-events: none;
 }
 
 .backgroundEmblem {
-    width: 60%;
-    opacity: 0.3;
+    width: auto;
+    height: 400px; /* Even bigger */
+    opacity: 0.45;
     pointer-events: none;
+    object-fit: contain;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+}
+
+.civHistoryContainer {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 100% !important;
+    min-height: 100px;
+    margin-top: 5px;
+    overflow: visible;
+}
+
+.civIcon {
+    height: auto;
+    object-fit: contain;
+    margin: 0 4px; /* Tighter margins */
+    background-color: transparent !important;
+    flex-shrink: 0;
+}
+
+/* Ensure nested tables are transparent so emblem shows through */
+.main-column table, .main-column tr, .main-column td, .main-column th {
+    background-color: transparent !important;
+}
+
+.main-column {
+    overflow: visible !important; 
+    vertical-align: top;
+    padding: 10px;
+}
+
+.playerSection {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    vertical-align: top;
 }

@@ -23,25 +23,23 @@
         }
     </style>
     <link rel="icon" href="webicon.ico">
-    <link rel="stylesheet" type="text/css" href="css/index.css">
+    <link rel="stylesheet" type="text/css" href="css/index.css?v=11">
 </head>
 
 <body>
-    <script type="text/javascript" src="js/jquery.min.js"></script>
-    <script type="text/javascript" src="js/utils.js"></script>
-    <script type="text/javascript" src="js/index.js"></script>
     <table>
         <tr>
-            <th class="playerName" id="playerName1">Streamer</th>
-            <th class="playerName" id="playerName2">Opponent</th>
+            <th class="playerName main-column" id="playerName1">Streamer</th>
+            <th class="playerName main-column" id="playerName2">Opponent</th>
         </tr>
         <tr>
-            <td>
-                <table>
+            <td class="playerSection main-column">
+                <div class="backgroundEmblemContainer" id="backgroundEmblem1"></div>
+                <table class="statsTable">
                     <tr>
                         <th class="statsHeader">Current Elo</th>
                         <th class="statsHeader">Max Elo</th>
-                        <th class="statsHeader">Total Games</th>
+                        <th class="statsHeader">Games</th>
                         <th class="statsHeader">Winrate</th>
                     </tr>
                     <tr>
@@ -51,13 +49,15 @@
                         <td class="statsValue" id="playerWinrate1"></td>
                     </tr>
                 </table>
+                <div id="lastUsedCivs1" class="civHistoryContainer"></div>
             </td>
-            <td>
-                <table>
+            <td class="playerSection main-column">
+                <div class="backgroundEmblemContainer" id="backgroundEmblem2"></div>
+                <table class="statsTable">
                     <tr>
                         <th class="statsHeader">Current Elo</th>
                         <th class="statsHeader">Max Elo</th>
-                        <th class="statsHeader">Total Games</th>
+                        <th class="statsHeader">Games</th>
                         <th class="statsHeader">Winrate</th>
                     </tr>
                     <tr>
@@ -67,25 +67,13 @@
                         <td class="statsValue" id="playerWinrate2"></td>
                     </tr>
                 </table>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <table>
-                    <tr>
-                        <td class="streamerCiv" id="lastUsedCivs1"></td>
-                    </tr>
-                </table>
-            </td>
-            <td>
-                <table>
-                    <tr>
-                        <td class="opponentCiv" id="lastUsedCivs2"></td>
-                    </tr>
-                </table>
+                <div id="lastUsedCivs2" class="civHistoryContainer"></div>
             </td>
         </tr>
     </table>
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/utils.js"></script>
+    <script type="text/javascript" src="js/index.js?v=11"></script>
 </body>
 
 </html>
