@@ -102,12 +102,21 @@ th {
 
 .civHistoryContainer {
     display: flex !important;
-    justify-content: center !important;
     align-items: center !important;
     width: 100% !important;
     min-height: 100px;
     margin-top: 5px;
     overflow: visible;
+}
+
+#lastUsedCivs1 {
+    justify-content: right !important;
+    padding-right: 20px;
+}
+
+#lastUsedCivs2 {
+    justify-content: left !important;
+    padding-left: 20px;
 }
 
 .civIcon {
