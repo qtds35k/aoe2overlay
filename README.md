@@ -4,7 +4,7 @@
 1. Add a **Browser Source** in OBS / Streamlabs.
 2. Set the URL to: `https://qtds35k.github.io/aoe2overlay/?profileId=YOUR_ID`
    *(Replace `YOUR_ID` with your numeric AoE2 profile ID, e.g., `199325` for Hera).*
-3. Set **Width** to `800` and **Height** to `250` (adjust as needed for your layout).
+3. Set **Width** to `1600` and **Height** to `300` (adjust as needed for your layout).
 4. Done! The overlay will automatically update your stats and opponent info while you play.
 
 ---
