@@ -59,6 +59,10 @@ th {
     color: white;
 }
 
+.statsValuePlayerName {
+    text-align: left;
+}
+
 .statsValueCurrentElo {
     font-family: "Goudy Old Style", serif;
     font-weight: bold;

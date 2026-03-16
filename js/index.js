@@ -123,21 +123,26 @@ function renderPlayerStats(side, playerStats) {
     renderBackgroundEmblem(side, playerStats.lastUsedCivs[0]);
 }
 
-function setTextShadow(playerNameId, colorCode, stringsLookup) {
+function applyColorAndShadow(element, colorCode, stringsLookup) {
+    if (colorCode == null) return;
     const playerColor = stringsLookup.color.find(color => color.id === colorCode);
-    const playerNameElement = document.getElementById(playerNameId);
-    if (!playerColor || !playerNameElement) {
+    if (!playerColor || !element) {
         return;
     }
 
-    playerNameElement.style.color = playerColor.string.toLowerCase();
+    element.style.color = playerColor.string.toLowerCase();
 
     if (isLightColor(colorCode)) {
-        playerNameElement.style.textShadow = "0px 0px 6.18px white";
+        element.style.textShadow = "0px 0px 2.18px white";
         return;
     }
 
-    playerNameElement.style.textShadow = "0.618px 0.618px 3px white, -0.618px -0.618px 3px white, 0px 0px 6.18px white";
+    element.style.textShadow = "0.618px 0.618px 3px white, -0.618px -0.618px 3px white, 0px 0px 2.18px white";
+}
+
+function setTextShadow(playerNameId, colorCode, stringsLookup) {
+    const element = document.getElementById(playerNameId);
+    applyColorAndShadow(element, colorCode, stringsLookup);
 }
 
 async function getOpponentProfileId(profileId, any1v1) {
@@ -164,7 +169,7 @@ async function getPlayerStats(profileId, any1v1, stringsLookup) {
     }
 
     const urlPlayerStatus = `${API_BASE}/api/nightbot/rank?profile_id=${profileId}`;
-    const urlProfile = `${API_BASE}/api/profiles/${profileId}`;
+    const urlProfile = `https://data.aoe2companion.com/api/profiles/${profileId}`;
     const urlMatches = `https://data.aoe2companion.com/api/matches?profile_ids=${profileId}&leaderboard_ids=rm_1v1`;
     const urlCivs = `${API_BASE}/api/civs/${profileId}`;
 
@@ -233,6 +238,122 @@ async function getPlayerStats(profileId, any1v1, stringsLookup) {
     };
 }
 
+async function fetchTeamPlayerStats(player) {
+    const profId = player.profileId || player.profile_id;
+    if (!profId) return _createFallbackTeamStats(player);
+    
+    try {
+        const response = await fetch(`https://data.aoe2companion.com/api/profiles/${profId}`);
+        if (!response.ok) throw new Error("Profile fetch failed");
+        const data = await response.json();
+        
+        const rm1v1 = data?.leaderboards?.find(l => l.leaderboardId === "rm_1v1");
+        const rmTeam = data?.leaderboards?.find(l => l.leaderboardId === "rm_team");
+        
+        return {
+            player: player,
+            rm1v1Elo: rm1v1?.rating ?? UNKNOWN_VALUE,
+            rm1v1Winrate: getLeaderboardWinrate(rm1v1),
+            rmTeamElo: rmTeam?.rating ?? UNKNOWN_VALUE,
+            rmTeamGames: rmTeam?.games?.toLocaleString?.() ?? UNKNOWN_VALUE
+        };
+    } catch(e) {
+        console.error("fetchTeamPlayerStats error:", e);
+        return _createFallbackTeamStats(player);
+    }
+}
+
+function _createFallbackTeamStats(player) {
+    return {
+        player: player,
+        rm1v1Elo: UNKNOWN_VALUE,
+        rm1v1Winrate: UNKNOWN_VALUE,
+        rmTeamElo: player.rating ?? UNKNOWN_VALUE, 
+        rmTeamGames: UNKNOWN_VALUE
+    };
+}
+
+async function renderTeamRows(tableId, players, stringsLookup) {
+    const tbody = document.querySelector(`#${tableId} tbody`);
+    if (!tbody) return;
+    tbody.innerHTML = ''; 
+
+    // Fetch in parallel
+    const statsList = await Promise.all(players.map(p => fetchTeamPlayerStats(p)));
+    
+    for(const stats of statsList) {
+        const p = stats.player;
+        const tr = document.createElement('tr');
+        
+        const nameTd = document.createElement('td');
+        nameTd.className = "statsValue statsValuePlayerName";
+        nameTd.innerText = `[${p.color ?? '?'}] ${p.name ?? "Unknown"}`;
+        applyColorAndShadow(nameTd, p.color, stringsLookup);
+
+        const v1Td = document.createElement('td');
+        v1Td.className = "statsValue";
+        v1Td.innerText = `${stats.rm1v1Elo} (${stats.rm1v1Winrate})`;
+
+        const teamEloTd = document.createElement('td');
+        teamEloTd.className = "statsValueCurrentElo";
+        teamEloTd.innerText = `${stats.rmTeamElo}`;
+
+        const teamGamesTd = document.createElement('td');
+        teamGamesTd.className = "statsValue";
+        teamGamesTd.innerText = `${stats.rmTeamGames}`;
+
+        tr.appendChild(nameTd);
+        tr.appendChild(v1Td);
+        tr.appendChild(teamEloTd);
+        tr.appendChild(teamGamesTd);
+        
+        tbody.appendChild(tr);
+    }
+}
+
+async function renderTeamGame(match, profileId, stringsLookup) {
+    if (!match || !match.teams) return;
+
+    let streamerTeam = match.teams.find(t => t.players.some(p => p.profileId?.toString() === profileId.toString() || p.profile_id?.toString() === profileId.toString()));
+    let opponentTeam = match.teams.find(t => t.teamId !== streamerTeam?.teamId);
+
+    if (!streamerTeam || !opponentTeam) return;
+
+    const streamerPlayer = streamerTeam.players.find(p => p.profileId?.toString() === profileId.toString() || p.profile_id?.toString() === profileId.toString());
+    const streamerName = streamerPlayer?.name ?? "Streamer";
+    const streamerCiv = streamerPlayer?.civ || streamerPlayer?.civName;
+    const streamerCivEntry = streamerCiv ? getCivEntry(stringsLookup, streamerCiv) : null;
+    
+    // Sort opponent team to find least playerNumber (lowest color code)
+    const sortedOpponents = [...opponentTeam.players].sort((a,b) => (a.color||99) - (b.color||99));
+    const opponentMain = sortedOpponents[0];
+    const opponentName = opponentMain?.name ?? "Opponent";
+    const opponentCiv = opponentMain?.civ || opponentMain?.civName;
+    const opponentCivEntry = opponentCiv ? getCivEntry(stringsLookup, opponentCiv) : null;
+    
+    console.log("[renderTeamGame] Opponent Main Selected:", opponentName, "Color:", opponentMain?.color, "from:", sortedOpponents.map(p => `${p.name} (${p.color})`));
+
+    const streamerTeamNameElement = document.getElementById("playerNameTeam1");
+    if (streamerTeamNameElement) {
+        streamerTeamNameElement.innerText = `${streamerName}'s team`;
+        applyColorAndShadow(streamerTeamNameElement, streamerPlayer?.color, stringsLookup);
+    }
+    
+    const opponentTeamNameElement = document.getElementById("playerNameTeam2");
+    if (opponentTeamNameElement) {
+        opponentTeamNameElement.innerText = `${opponentName}'s team`;
+        applyColorAndShadow(opponentTeamNameElement, opponentMain?.color, stringsLookup);
+    }
+
+    renderBackgroundEmblem("Team1", streamerCivEntry);
+    renderBackgroundEmblem("Team2", opponentCivEntry);
+
+    // Sort players by color internally before rendering
+    const sortPl = (a, b) => (a.color||99) - (b.color||99);
+    renderTeamRows("statsTableTeam1", [...streamerTeam.players].sort(sortPl), stringsLookup);
+    renderTeamRows("statsTableTeam2", [...opponentTeam.players].sort(sortPl), stringsLookup);
+}
+
 async function main() {
     const urlParams = new URLSearchParams(window.location.search);
     const stringsLookupPath = `${getRepoBasePath()}/resource/strings.json`;
@@ -247,24 +368,33 @@ async function main() {
 
     try {
         const stringsLookup = await $.getJSON(stringsLookupPath);
-        // Use manual opponent if provided, otherwise attempt API detection (may return null)
-        const opponentProfileId = manualOpponentId
-            ?? await getOpponentProfileId(streamerProfileId, any1v1);
-        const [streamerResult, opponentResult] = await Promise.allSettled([
-            getPlayerStats(streamerProfileId, any1v1, stringsLookup),
-            getPlayerStats(opponentProfileId, any1v1, stringsLookup)
-        ]);
+        
+        const urlRecentMatches = `https://data.aoe2companion.com/api/matches?profile_ids=${streamerProfileId}&leaderboard_ids=rm_1v1,rm_team`;
+        const recentMatchesResponse = await fetch(urlRecentMatches).catch(() => null);
+        const recentData = recentMatchesResponse ? await recentMatchesResponse.json() : null;
+        let latestMatch = Array.isArray(recentData) ? recentData[0] : (recentData?.matches?.[0] ?? null);
 
-        const streamerStats = streamerResult.status === "fulfilled"
-            ? streamerResult.value
-            : createUnknownPlayerStats();
-        const opponentStats = opponentResult.status === "fulfilled"
-            ? opponentResult.value
-            : createUnknownPlayerStats();
+        if (latestMatch && latestMatch.leaderboardId === "rm_team") {
+            document.getElementById('overlay-1v1').style.display = 'none';
+            document.getElementById('overlay-team').style.display = '';
+            await renderTeamGame(latestMatch, streamerProfileId, stringsLookup);
+        } else {
+            document.getElementById('overlay-team').style.display = 'none';
+            document.getElementById('overlay-1v1').style.display = '';
+            
+            const opponentProfileId = manualOpponentId ?? await getOpponentProfileId(streamerProfileId, any1v1);
+            const [streamerResult, opponentResult] = await Promise.allSettled([
+                getPlayerStats(streamerProfileId, any1v1, stringsLookup),
+                getPlayerStats(opponentProfileId, any1v1, stringsLookup)
+            ]);
 
-        applyMatchColors(streamerStats, stringsLookup);
-        renderPlayerStats(1, streamerStats);
-        renderPlayerStats(2, opponentStats);
+            const streamerStats = streamerResult.status === "fulfilled" ? streamerResult.value : createUnknownPlayerStats();
+            const opponentStats = opponentResult.status === "fulfilled" ? opponentResult.value : createUnknownPlayerStats();
+
+            applyMatchColors(streamerStats, stringsLookup);
+            renderPlayerStats(1, streamerStats);
+            renderPlayerStats(2, opponentStats);
+        }
     } catch (error) {
         console.error(error);
     }

@@ -27,7 +27,8 @@
 </head>
 
 <body>
-    <table>
+    <div id="overlay-1v1" style="display: none;">
+        <table>
         <tr>
             <th class="playerName main-column" id="playerName1">Streamer</th>
             <th class="playerName main-column" id="playerName2">Opponent</th>
@@ -71,9 +72,51 @@
             </td>
         </tr>
     </table>
+    </div>
+    
+    <div id="overlay-team" style="display: none;">
+        <table>
+            <tr>
+                <th class="playerName main-column" id="playerNameTeam1">Streamer's team</th>
+                <th class="playerName main-column" id="playerNameTeam2">Opponent's team</th>
+            </tr>
+            <tr>
+                <td class="playerSection main-column">
+                    <div class="backgroundEmblemContainer" id="backgroundEmblemTeam1"></div>
+                    <table class="statsTable" id="statsTableTeam1">
+                        <thead>
+                            <tr>
+                                <th class="statsHeader">Player</th>
+                                <th class="statsHeader">1v1 Elo (Win%)</th>
+                                <th class="statsHeader">Team Elo</th>
+                                <th class="statsHeader">Team Games</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </td>
+                <td class="playerSection main-column">
+                    <div class="backgroundEmblemContainer" id="backgroundEmblemTeam2"></div>
+                    <table class="statsTable" id="statsTableTeam2">
+                        <thead>
+                            <tr>
+                                <th class="statsHeader">Player</th>
+                                <th class="statsHeader">1v1 Elo (Win%)</th>
+                                <th class="statsHeader">Team Elo</th>
+                                <th class="statsHeader">Team Games</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </div>
     <script type="text/javascript" src="js/jquery.min.js"></script>
     <script type="text/javascript" src="js/utils.js"></script>
-    <script type="text/javascript" src="js/index.js?v=11"></script>
+    <script type="text/javascript" src="js/index.js?v=21"></script>
 </body>
 
 </html>
