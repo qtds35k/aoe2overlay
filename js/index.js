@@ -140,6 +140,15 @@ function applyColorAndShadow(element, colorCode, stringsLookup) {
     element.style.textShadow = "0.618px 0.618px 3px white, -0.618px -0.618px 3px white, 0px 0px 2.18px white";
 }
 
+function applyColorOnly(element, colorCode, stringsLookup) {
+    if (colorCode == null) return;
+    const playerColor = stringsLookup.color.find(color => color.id === colorCode);
+    if (!playerColor || !element) {
+        return;
+    }
+    element.style.color = playerColor.string.toLowerCase();
+}
+
 function setTextShadow(playerNameId, colorCode, stringsLookup) {
     const element = document.getElementById(playerNameId);
     applyColorAndShadow(element, colorCode, stringsLookup);
@@ -273,13 +282,10 @@ function _createFallbackTeamStats(player) {
     };
 }
 
-async function renderTeamRows(tableId, players, stringsLookup) {
+function renderTeamRows(tableId, statsList, stringsLookup, maxTeamElo) {
     const tbody = document.querySelector(`#${tableId} tbody`);
     if (!tbody) return;
     tbody.innerHTML = ''; 
-
-    // Fetch in parallel
-    const statsList = await Promise.all(players.map(p => fetchTeamPlayerStats(p)));
     
     for(const stats of statsList) {
         const p = stats.player;
@@ -288,14 +294,17 @@ async function renderTeamRows(tableId, players, stringsLookup) {
         const nameTd = document.createElement('td');
         nameTd.className = "statsValue statsValuePlayerName";
         nameTd.innerText = `[${p.color ?? '?'}] ${p.name ?? "Unknown"}`;
-        applyColorAndShadow(nameTd, p.color, stringsLookup);
+        applyColorOnly(nameTd, p.color, stringsLookup);
 
         const v1Td = document.createElement('td');
         v1Td.className = "statsValue";
         v1Td.innerText = `${stats.rm1v1Elo} (${stats.rm1v1Winrate})`;
 
         const teamEloTd = document.createElement('td');
-        teamEloTd.className = "statsValueCurrentElo";
+        teamEloTd.className = "statsValueTeamElo";
+        if (stats.rmTeamElo !== UNKNOWN_VALUE && parseInt(stats.rmTeamElo) >= maxTeamElo) {
+            teamEloTd.classList.add("highest-team-elo");
+        }
         teamEloTd.innerText = `${stats.rmTeamElo}`;
 
         const teamGamesTd = document.createElement('td');
@@ -348,10 +357,18 @@ async function renderTeamGame(match, profileId, stringsLookup) {
     renderBackgroundEmblem("Team1", streamerCivEntry);
     renderBackgroundEmblem("Team2", opponentCivEntry);
 
+    // Fetch all stats first
+    const streamerStatsList = await Promise.all(streamerTeam.players.map(p => fetchTeamPlayerStats(p)));
+    const opponentStatsList = await Promise.all(opponentTeam.players.map(p => fetchTeamPlayerStats(p)));
+    
+    const allStats = [...streamerStatsList, ...opponentStatsList];
+    const maxTeamElo = Math.max(...allStats.map(s => s.rmTeamElo !== UNKNOWN_VALUE ? parseInt(s.rmTeamElo) || 0 : 0));
+
     // Sort players by color internally before rendering
-    const sortPl = (a, b) => (a.color||99) - (b.color||99);
-    renderTeamRows("statsTableTeam1", [...streamerTeam.players].sort(sortPl), stringsLookup);
-    renderTeamRows("statsTableTeam2", [...opponentTeam.players].sort(sortPl), stringsLookup);
+    const sortPl = (a, b) => (a.player.color||99) - (b.player.color||99);
+    
+    renderTeamRows("statsTableTeam1", streamerStatsList.sort(sortPl), stringsLookup, maxTeamElo);
+    renderTeamRows("statsTableTeam2", opponentStatsList.sort(sortPl), stringsLookup, maxTeamElo);
 }
 
 async function main() {

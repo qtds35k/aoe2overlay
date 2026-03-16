@@ -128,7 +128,26 @@ th {
     object-fit: contain;
     margin: 0 4px; /* Tighter margins */
     background-color: transparent !important;
-    flex-shrink: 0;
+    flex: 1 1 0;
+}
+
+#overlay-team .statsValue,
+#overlay-team .statsValuePlayerName {
+    font-size: 18px;
+    text-shadow: none;
+}
+
+#overlay-team .statsValueTeamElo {
+    font-family: "Goudy Old Style", serif;
+    font-weight: bold;
+    color: white;
+    font-size: 18px;
+    text-align: center;
+}
+
+#overlay-team .highest-team-elo {
+    color: yellow;
+    font-size: 22px;
 }
 
 /* Ensure nested tables are transparent so emblem shows through */
