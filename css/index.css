@@ -128,7 +128,7 @@ th {
     object-fit: contain;
     margin: 0 4px; /* Tighter margins */
     background-color: transparent !important;
-    flex: 1 1 0;
+    flex-shrink: 0;
 }
 
 #overlay-team .statsValue,
